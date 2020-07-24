@@ -1,0 +1,88 @@
+
+move.png
+size: 1024,1024
+format: RGBA8888
+filter: Linear,Linear
+repeat: none
+Run_
+  rotate: false
+  xy: 2, 511
+  size: 415, 507
+  orig: 415, 507
+  offset: 0, 0
+  index: 0
+Run_
+  rotate: false
+  xy: 2, 2
+  size: 415, 507
+  orig: 415, 507
+  offset: 0, 0
+  index: 1
+Run_
+  rotate: false
+  xy: 419, 511
+  size: 415, 507
+  orig: 415, 507
+  offset: 0, 0
+  index: 2
+Run_
+  rotate: false
+  xy: 419, 2
+  size: 415, 507
+  orig: 415, 507
+  offset: 0, 0
+  index: 3
+
+move2.png
+size: 1024,1024
+format: RGBA8888
+filter: Nearest,Nearest
+repeat: none
+Run_
+  rotate: false
+  xy: 2, 511
+  size: 415, 507
+  orig: 415, 507
+  offset: 0, 0
+  index: 4
+Run_
+  rotate: false
+  xy: 2, 2
+  size: 415, 507
+  orig: 415, 507
+  offset: 0, 0
+  index: 5
+Run_
+  rotate: false
+  xy: 419, 511
+  size: 415, 507
+  orig: 415, 507
+  offset: 0, 0
+  index: 6
+Run_
+  rotate: false
+  xy: 419, 2
+  size: 415, 507
+  orig: 415, 507
+  offset: 0, 0
+  index: 7
+
+move3.png
+size: 1024,512
+format: RGBA8888
+filter: Nearest,Nearest
+repeat: none
+Run_
+  rotate: false
+  xy: 2, 2
+  size: 415, 507
+  orig: 415, 507
+  offset: 0, 0
+  index: 8
+Run_
+  rotate: false
+  xy: 419, 2
+  size: 415, 507
+  orig: 415, 507
+  offset: 0, 0
+  index: 9
