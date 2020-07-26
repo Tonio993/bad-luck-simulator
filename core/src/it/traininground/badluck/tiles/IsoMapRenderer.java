@@ -1,45 +1,64 @@
 package it.traininground.badluck.tiles;
 
+import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.utils.Array;
 
+import java.util.HashMap;
+import java.util.Map;
+
 public class IsoMapRenderer {
 
     private TextureAtlas terrain;
-    private Array<Array<TextureAtlas.AtlasRegion>> mapArray;
 
     private int x;
     private int y;
-    private int rows;
-    private int columns;
     private int cellWidth;
     private int cellHeight;
+    private int layerHeight;
 
     private IsoMap isoMap;
+    private Map<TerrainType, TextureAtlas.AtlasRegion> terrainMap;
 
-    public IsoMapRenderer(int rows, int columns, int cellWidth, int cellHeight) {
-        this.rows = rows;
-        this.columns = columns;
+    public IsoMapRenderer(int cellWidth, int cellHeight, int layerHeight, IsoMap isoMap) {
         this.cellWidth = cellWidth;
         this.cellHeight = cellHeight;
-
-        isoMap = new IsoMap(rows, columns);
+        this.layerHeight = layerHeight;
+        this.isoMap = isoMap;
 
         terrain = new TextureAtlas("terrain/terrain.atlas");
-        Array<TextureAtlas.AtlasRegion> terrainTexture = terrain.findRegions("terrain_P");
-
-
+        terrainMap = new HashMap<>();
+        terrainMap.put(TerrainType.PLAIN, terrain.findRegion("terrain_P"));
+        terrainMap.put(TerrainType.DOWN_NORTH, terrain.findRegion("terrain_DN"));
+        terrainMap.put(TerrainType.DOWN_NORTH_WEST, terrain.findRegion("terrain_DNW"));
+        terrainMap.put(TerrainType.DOWN_WEST, terrain.findRegion("terrain_DW"));
+        terrainMap.put(TerrainType.DOWN_SOUTH_WEST, terrain.findRegion("terrain_DSW"));
+        terrainMap.put(TerrainType.DOWN_SOUTH, terrain.findRegion("terrain_DS"));
+        terrainMap.put(TerrainType.DOWN_SOUTH_EAST, terrain.findRegion("terrain_DSE"));
+        terrainMap.put(TerrainType.DOWN_EAST, terrain.findRegion("terrain_DE"));
+        terrainMap.put(TerrainType.DOWN_NORTH_EAST, terrain.findRegion("terrain_DNE"));
 
     }
 
     public void draw(SpriteBatch batch) {
-        for (int r = 0; r < rows; r++) {
-            for (int c = 0; c < columns; c++) {
-                batch.draw(mapArray.get(r).get(c), x + ((r-c) * (cellWidth/2)), y - ((r+c) * (cellHeight/2)));
+        int srcBlend = batch.getBlendSrcFunc();
+        int dstBlend = batch.getBlendDstFunc();
+        batch.setBlendFunction(GL20.GL_SRC_ALPHA, GL20.GL_SRC_COLOR);
+        for (int l = 0; l < isoMap.getLayers(); l++) {
+            for (int r = 0; r < isoMap.getRows(); r++) {
+                for (int c = 0; c < isoMap.getColumns(); c++) {
+                    TerrainType terrainType = isoMap.getTile(l, r, c);
+                    if (terrainType != TerrainType.EMPTY) {
+                        batch.draw(terrainMap.get(terrainType), x + ((r-c) * (cellWidth/2f)), y + (l * layerHeight) - ((r+c) * (cellHeight/2f)));
+                    }
+                }
             }
         }
+        batch.setBlendFunction(srcBlend, dstBlend);
     }
 
     public int getX() {
@@ -58,22 +77,6 @@ public class IsoMapRenderer {
         this.y = y;
     }
 
-    public int getRows() {
-        return rows;
-    }
-
-    public void setRows(int rows) {
-        this.rows = rows;
-    }
-
-    public int getColumns() {
-        return columns;
-    }
-
-    public void setColumns(int columns) {
-        this.columns = columns;
-    }
-
     public int getCellWidth() {
         return cellWidth;
     }
@@ -88,5 +91,13 @@ public class IsoMapRenderer {
 
     public void setCellHeight(int cellHeight) {
         this.cellHeight = cellHeight;
+    }
+
+    public IsoMap getIsoMap() {
+        return isoMap;
+    }
+
+    public void setIsoMap(IsoMap isoMap) {
+        this.isoMap = isoMap;
     }
 }

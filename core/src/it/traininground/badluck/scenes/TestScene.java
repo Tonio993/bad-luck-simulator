@@ -4,6 +4,7 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.Screen;
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.math.Vector3;
@@ -12,7 +13,10 @@ import com.badlogic.gdx.utils.viewport.Viewport;
 
 import it.traininground.badluck.GameMain;
 import it.traininground.badluck.actor.Dude;
+import it.traininground.badluck.tiles.IsoMap;
+import it.traininground.badluck.tiles.IsoMapBuilder;
 import it.traininground.badluck.tiles.IsoMapRenderer;
+import it.traininground.badluck.tiles.TerrainType;
 import it.traininground.badluck.util.GameInfo;
 import it.traininground.badluck.util.CameraMovementHandler;
 
@@ -24,7 +28,7 @@ public class TestScene implements Screen, InputProcessor {
     private Viewport gameViewport;
 
     private Dude dude;
-    IsoMapRenderer isoMap;
+    IsoMapRenderer isoMapRenderer;
 
     private CameraMovementHandler mouseEdgeCameraMoving;
 
@@ -41,7 +45,19 @@ public class TestScene implements Screen, InputProcessor {
         gameViewport = new StretchViewport(GameInfo.WIDTH, GameInfo.HEIGHT);
 
         dude = new Dude(GameInfo.WIDTH/2f, GameInfo.HEIGHT/2f);
-        isoMap = new IsoMapRenderer(30, 30, 64, 32);
+
+        IsoMap isoMap = new IsoMapBuilder(5, 100, 100).build();
+        isoMapRenderer = new IsoMapRenderer(64, 32, 32, isoMap);
+
+        isoMapRenderer.getIsoMap().setTile(1, 3, 3, TerrainType.PLAIN);
+        isoMapRenderer.getIsoMap().setTile(1, 3, 2, TerrainType.DOWN_NORTH);
+        isoMapRenderer.getIsoMap().setTile(1, 2, 2, TerrainType.DOWN_NORTH_WEST);
+        isoMapRenderer.getIsoMap().setTile(1, 2, 3, TerrainType.DOWN_WEST);
+        isoMapRenderer.getIsoMap().setTile(1, 2, 4, TerrainType.DOWN_SOUTH_WEST);
+        isoMapRenderer.getIsoMap().setTile(1, 3, 4, TerrainType.DOWN_SOUTH);
+        isoMapRenderer.getIsoMap().setTile(1, 4, 4, TerrainType.DOWN_SOUTH_EAST);
+        isoMapRenderer.getIsoMap().setTile(1, 4, 3, TerrainType.DOWN_EAST);
+        isoMapRenderer.getIsoMap().setTile(1, 4, 2, TerrainType.DOWN_NORTH_EAST);
 
         Gdx.input.setInputProcessor(this);
 
@@ -66,7 +82,7 @@ public class TestScene implements Screen, InputProcessor {
 
         game.getBatch().begin();
 
-        isoMap.draw(game.getBatch());
+        isoMapRenderer.draw(game.getBatch());
         dude.draw(game.getBatch(), delta);
 
         game.getBatch().end();
@@ -140,10 +156,8 @@ public class TestScene implements Screen, InputProcessor {
 
     @Override
     public boolean touchUp(int screenX, int screenY, int pointer, int button) {
-        switch (button) {
-            case Input.Buttons.MIDDLE:
-                isCameraDragged = false;
-                break;
+        if (button == Input.Buttons.MIDDLE) {
+            isCameraDragged = false;
         }
         return false;
     }
