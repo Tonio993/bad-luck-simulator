@@ -3,7 +3,7 @@ package it.traininground.badluck.util;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.graphics.Camera;
 
-public class MouseEdgeCameraMoving {
+public class CameraMovementHandler {
 
     private final Camera camera;
 
@@ -15,7 +15,7 @@ public class MouseEdgeCameraMoving {
 
     private int cameraSpeed = 800;
 
-    public MouseEdgeCameraMoving(Camera camera) {
+    public CameraMovementHandler(Camera camera) {
         this.camera = camera;
     }
 

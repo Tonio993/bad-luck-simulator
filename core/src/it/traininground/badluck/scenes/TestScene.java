@@ -6,16 +6,15 @@ import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
-import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.utils.viewport.StretchViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
 
 import it.traininground.badluck.GameMain;
 import it.traininground.badluck.actor.Dude;
-import it.traininground.badluck.tiles.IsoMap;
+import it.traininground.badluck.tiles.IsoMapRenderer;
 import it.traininground.badluck.util.GameInfo;
-import it.traininground.badluck.util.MouseEdgeCameraMoving;
+import it.traininground.badluck.util.CameraMovementHandler;
 
 public class TestScene implements Screen, InputProcessor {
 
@@ -25,9 +24,9 @@ public class TestScene implements Screen, InputProcessor {
     private Viewport gameViewport;
 
     private Dude dude;
-    IsoMap isoMap;
+    IsoMapRenderer isoMap;
 
-    private MouseEdgeCameraMoving mouseEdgeCameraMoving;
+    private CameraMovementHandler mouseEdgeCameraMoving;
 
     private boolean isCameraDragged;
     private Vector3 cameraDraggedStart;
@@ -42,12 +41,12 @@ public class TestScene implements Screen, InputProcessor {
         gameViewport = new StretchViewport(GameInfo.WIDTH, GameInfo.HEIGHT);
 
         dude = new Dude(GameInfo.WIDTH/2f, GameInfo.HEIGHT/2f);
+        isoMap = new IsoMapRenderer(30, 30, 64, 32);
 
         Gdx.input.setInputProcessor(this);
 
-        isoMap = new IsoMap(30, 30, 80, 40);
 
-        mouseEdgeCameraMoving = new MouseEdgeCameraMoving(mainCamera);
+        mouseEdgeCameraMoving = new CameraMovementHandler(mainCamera);
     }
 
     @Override
@@ -64,9 +63,10 @@ public class TestScene implements Screen, InputProcessor {
             mouseEdgeCameraMoving.moveCamera(delta);
         }
 
-        isoMap.render(game.getBatch());
 
         game.getBatch().begin();
+
+        isoMap.draw(game.getBatch());
         dude.draw(game.getBatch(), delta);
 
         game.getBatch().end();
