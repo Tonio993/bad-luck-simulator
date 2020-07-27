@@ -4,7 +4,6 @@ import com.badlogic.gdx.Game;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 
 import it.traininground.badluck.scenes.MainTestScene;
-import it.traininground.badluck.scenes.MergeTestScene;
 
 public class GameMain extends Game {
 	SpriteBatch batch;
@@ -12,7 +11,7 @@ public class GameMain extends Game {
 	@Override
 	public void create () {
 		this.batch = new SpriteBatch();
-		setScreen(new MergeTestScene(this));
+		setScreen(new MainTestScene(this));
 //		try {
 //			final String VERTEX = FileUtil.readFile(FileUtil.getResourceAsStream("shader/shader.vert"));
 //			final String FRAGMENT = FileUtil.readFile(FileUtil.getResourceAsStream("shader/shader.frag"));

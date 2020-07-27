@@ -4,7 +4,6 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.Screen;
-import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.math.Vector3;
@@ -16,9 +15,10 @@ import it.traininground.badluck.actor.Dude;
 import it.traininground.badluck.tiles.IsoMap;
 import it.traininground.badluck.tiles.IsoMapBuilder;
 import it.traininground.badluck.tiles.IsoMapRenderer;
+import it.traininground.badluck.tiles.IsoMapSimpleRenderer;
 import it.traininground.badluck.tiles.TerrainType;
-import it.traininground.badluck.util.GameInfo;
 import it.traininground.badluck.util.CameraMovementHandler;
+import it.traininground.badluck.util.GameInfo;
 
 public class MainTestScene implements Screen, InputProcessor {
 
@@ -46,18 +46,31 @@ public class MainTestScene implements Screen, InputProcessor {
 
         dude = new Dude(GameInfo.WIDTH/2f, GameInfo.HEIGHT/2f);
 
-        IsoMap isoMap = new IsoMapBuilder(5, 100, 100).build();
-        isoMapRenderer = new IsoMapRenderer(64, 32, 32, isoMap);
+        IsoMap isoMap = new IsoMapBuilder(2, 10, 10).setBaseLayer(0).build();
 
-        isoMapRenderer.getIsoMap().setTile(1, 3, 3, TerrainType.PLAIN);
-        isoMapRenderer.getIsoMap().setTile(1, 3, 2, TerrainType.DOWN_NORTH);
-        isoMapRenderer.getIsoMap().setTile(1, 2, 2, TerrainType.DOWN_NORTH_WEST);
-        isoMapRenderer.getIsoMap().setTile(1, 2, 3, TerrainType.DOWN_WEST);
-        isoMapRenderer.getIsoMap().setTile(1, 2, 4, TerrainType.DOWN_SOUTH_WEST);
-        isoMapRenderer.getIsoMap().setTile(1, 3, 4, TerrainType.DOWN_SOUTH);
-        isoMapRenderer.getIsoMap().setTile(1, 4, 4, TerrainType.DOWN_SOUTH_EAST);
-        isoMapRenderer.getIsoMap().setTile(1, 4, 3, TerrainType.DOWN_EAST);
-        isoMapRenderer.getIsoMap().setTile(1, 4, 2, TerrainType.DOWN_NORTH_EAST);
+        isoMap.setTile(1, 3, 3, TerrainType.PLAIN);
+        isoMap.setTile(1, 3, 2, TerrainType.DOWN_NORTH);
+        isoMap.setTile(1, 2, 2, TerrainType.DOWN_NORTH_WEST);
+        isoMap.setTile(1, 2, 3, TerrainType.DOWN_WEST);
+        isoMap.setTile(1, 2, 4, TerrainType.DOWN_SOUTH_WEST);
+        isoMap.setTile(1, 3, 4, TerrainType.DOWN_SOUTH);
+        isoMap.setTile(1, 4, 4, TerrainType.DOWN_SOUTH_EAST);
+        isoMap.setTile(1, 4, 3, TerrainType.DOWN_EAST);
+        isoMap.setTile(1, 4, 2, TerrainType.DOWN_NORTH_EAST);
+
+        isoMapRenderer = new IsoMapSimpleRenderer(64, 32, 32, isoMap);
+
+        new Thread(new IsoMapRunnable(isoMap) {
+            @Override
+            public void run() {
+                try {
+                    Thread.sleep(2000);
+                    isoMap.setTile(1, 7, 7, TerrainType.PLAIN);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }
+        }).start();
 
         Gdx.input.setInputProcessor(this);
 
@@ -182,5 +195,19 @@ public class MainTestScene implements Screen, InputProcessor {
         mainCamera.viewportWidth = Math.max(GameInfo.WIDTH, mainCamera.viewportWidth + (GameInfo.WIDTH / 20f) * amount);
         mainCamera.viewportHeight = Math.max(GameInfo.HEIGHT, mainCamera.viewportHeight + (GameInfo.HEIGHT / 20f) * amount);
         return false;
+    }
+
+    static abstract class IsoMapRunnable implements Runnable {
+
+        protected IsoMap isoMap;
+
+        public IsoMapRunnable(IsoMap isoMap) {
+            this.isoMap = isoMap;
+        }
+
+        @Override
+        public void run() {
+
+        }
     }
 }
