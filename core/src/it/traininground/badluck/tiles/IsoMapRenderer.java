@@ -1,12 +1,10 @@
 package it.traininground.badluck.tiles;
 
-import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import com.badlogic.gdx.graphics.g2d.TextureAtlas;
-
-import java.util.HashMap;
-import java.util.Map;
+import com.badlogic.gdx.graphics.g2d.Batch;
 
 public abstract class IsoMapRenderer {
+
+    protected Batch batch;
 
     protected int x;
     protected int y;
@@ -16,15 +14,15 @@ public abstract class IsoMapRenderer {
 
     protected IsoMap isoMap;
 
-    public IsoMapRenderer(int cellWidth, int cellHeight, int layerHeight, IsoMap isoMap) {
+    public IsoMapRenderer(Batch batch, int cellWidth, int cellHeight, int layerHeight, IsoMap isoMap) {
+        this.batch = batch;
         this.cellWidth = cellWidth;
         this.cellHeight = cellHeight;
         this.layerHeight = layerHeight;
         this.isoMap = isoMap;
-
     }
 
-    public abstract void draw(SpriteBatch batch);
+    public abstract void draw();
 
     public int getX() {
         return x;

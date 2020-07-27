@@ -1,17 +1,27 @@
 package it.traininground.badluck.tiles;
 
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 
 import java.util.HashMap;
 import java.util.Map;
 
+import it.traininground.badluck.util.ShapeDrawerUtil;
+import space.earlygrey.shapedrawer.ShapeDrawer;
+
 public class IsoMapSimpleRenderer extends IsoMapRenderer {
 
     private Map<TerrainType, TextureAtlas.AtlasRegion> terrainMap;
 
-    public IsoMapSimpleRenderer(int cellWidth, int cellHeight, int layerHeight, IsoMap isoMap) {
-        super(cellWidth, cellHeight, layerHeight, isoMap);
+    private ShapeDrawer shapeDrawer;
+
+    private int visibleLayerLevel;
+
+    public IsoMapSimpleRenderer(SpriteBatch batch, int cellWidth, int cellHeight, int layerHeight, IsoMap isoMap) {
+        super(batch, cellWidth, cellHeight, layerHeight, isoMap);
+        shapeDrawer = ShapeDrawerUtil.createShapeDrawer(batch);
+        this.visibleLayerLevel = isoMap.getLayers() - 1;
 
         TextureAtlas terrain = new TextureAtlas("terrain/terrain.atlas");
         terrainMap = new HashMap<>();
@@ -28,8 +38,8 @@ public class IsoMapSimpleRenderer extends IsoMapRenderer {
     }
 
     @Override
-    public void draw(SpriteBatch batch) {
-        for (int l = 0; l < isoMap.getLayers(); l++) {
+    public void draw() {
+        for (int l = 0; l <= visibleLayerLevel; l++) {
             for (int r = 0; r < isoMap.getRows(); r++) {
                 for (int c = 0; c < isoMap.getColumns(); c++) {
                     TerrainType terrainType = isoMap.getTile(l, r, c);
@@ -39,5 +49,18 @@ public class IsoMapSimpleRenderer extends IsoMapRenderer {
                 }
             }
         }
+
+        shapeDrawer.setColor(Color.ORANGE);
+        shapeDrawer.setDefaultLineWidth(5);
+        shapeDrawer.polygon(new float[]{0, cellHeight/2f, cellWidth/2f, 0, cellWidth, cellHeight/2f, cellWidth/2f, cellHeight});
+
+    }
+
+    public int getVisibleLayerLevel() {
+        return visibleLayerLevel;
+    }
+
+    public void setVisibleLayerLevel(int visibleLayerLevel) {
+        this.visibleLayerLevel = visibleLayerLevel;
     }
 }

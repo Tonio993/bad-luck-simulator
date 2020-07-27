@@ -11,8 +11,8 @@ public class IsoMapTotalRenderer extends IsoMapRenderer {
 
     private Texture textureResult;
 
-    public IsoMapTotalRenderer(int cellWidth, int cellHeight, int layerHeight, IsoMap isoMap) {
-        super(cellWidth, cellHeight, layerHeight, isoMap);
+    public IsoMapTotalRenderer(SpriteBatch batch, int cellWidth, int cellHeight, int layerHeight, IsoMap isoMap) {
+        super(batch, cellWidth, cellHeight, layerHeight, isoMap);
 
         Map<TerrainType, Texture> terrainMap = new HashMap<>();
         terrainMap.put(TerrainType.PLAIN, new Texture("terrain/terrain_P.png"));
@@ -52,10 +52,9 @@ public class IsoMapTotalRenderer extends IsoMapRenderer {
         for (Pixmap pixmapToDispose : pixmapMap.values()) {
             pixmapToDispose.dispose();
         }
-
     }
 
-    public void draw(SpriteBatch batch) {
+    public void draw() {
         batch.draw(textureResult, x, y);
     }
 }

@@ -2,8 +2,11 @@ package it.traininground.badluck.util;
 
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.graphics.Camera;
+import com.badlogic.gdx.math.Vector3;
 
-public class CameraMovementHandler {
+import it.traininground.badluck.input.InputHandler;
+
+public class CameraMovementHandler extends InputHandler {
 
     private final Camera camera;
 
@@ -13,9 +16,14 @@ public class CameraMovementHandler {
     private int keyHorizontalMovement = 0;
     private int keyVerticalMovement = 0;
 
+    private boolean isCameraDragged;
+    private Vector3 cameraDraggedStart;
+    private Vector3 cameraDraggedTouch;
+
     private int cameraSpeed = 800;
 
     public CameraMovementHandler(Camera camera) {
+        super(EventType.MOUSE_MOVED, EventType.SCROLLED, EventType.KEY_DOWN, EventType.KEY_UP, EventType.TOUCH_DOWN, EventType.TOUCH_UP, EventType.TOUCH_DRAGGED);
         this.camera = camera;
     }
 
@@ -54,12 +62,61 @@ public class CameraMovementHandler {
     }
 
     public void moveCamera(float delta) {
-        int horizontalMovement = edgeHorizontalMovement + keyHorizontalMovement;
-        int verticalMovement = edgeVerticalMovement + keyVerticalMovement;
-        if (horizontalMovement != 0 || verticalMovement != 0) {
-            float offset = cameraSpeed * delta * (camera.viewportWidth / GameInfo.WIDTH);
-            camera.position.add(horizontalMovement * offset, verticalMovement * offset, 0);
+        if (!isCameraDragged) {
+            int horizontalMovement = edgeHorizontalMovement + keyHorizontalMovement;
+            int verticalMovement = edgeVerticalMovement + keyVerticalMovement;
+            if (horizontalMovement != 0 || verticalMovement != 0) {
+                float offset = cameraSpeed * delta * (camera.viewportWidth / GameInfo.WIDTH);
+                camera.position.add(horizontalMovement * offset, verticalMovement * offset, 0);
 
+            }
         }
     }
+
+    @Override
+    public void keyDown(int keycode) {
+        checkKeyCameraMovement(keycode, false);
+    }
+
+    @Override
+    public void keyUp(int keycode) {
+        checkKeyCameraMovement(keycode, true);
+    }
+
+    public void touchDown(int screenX, int screenY, int pointer, int button) {
+        Vector3 touchPoint = camera.unproject(new Vector3(screenX, screenY, 0));
+        if (button == Input.Buttons.MIDDLE) {
+            isCameraDragged = true;
+            cameraDraggedStart = new Vector3(camera.position.x, camera.position.y, 0);
+            cameraDraggedTouch = touchPoint;
+        }
+    }
+
+    @Override
+    public void touchUp(int screenX, int screenY, int pointer, int button) {
+        if (button == Input.Buttons.MIDDLE) {
+            isCameraDragged = false;
+        }
+    }
+
+    @Override
+    public void touchDragged(int screenX, int screenY, int pointer) {
+        Vector3 touchPoint = camera.unproject(new Vector3(screenX, screenY, 0));
+        if (isCameraDragged) {
+            camera.position.set(cameraDraggedStart.sub(touchPoint.sub(cameraDraggedTouch)));
+        }
+    }
+
+    @Override
+    public void mouseMoved(int screenX, int screenY) {
+        checkMousePosition(screenX, screenY);
+    }
+
+    @Override
+    public void scrolled(int amount) {
+        camera.viewportWidth = Math.max(0, camera.viewportWidth + (GameInfo.WIDTH / 20f) * amount);
+        camera.viewportHeight = Math.max(0, camera.viewportHeight + (GameInfo.HEIGHT / 20f) * amount);
+    }
+
+
 }
