@@ -83,6 +83,7 @@ public class MainTestScene implements Screen {
 
         mouseEdgeCameraMoving = new CameraMovementHandler(mainCamera);
         inputManager.bind(mouseEdgeCameraMoving);
+        inputManager.bind(isoMapRenderer.inputHandler);
     }
 
     @Override

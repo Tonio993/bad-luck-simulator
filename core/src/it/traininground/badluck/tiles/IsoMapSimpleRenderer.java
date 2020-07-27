@@ -1,5 +1,7 @@
 package it.traininground.badluck.tiles;
 
+import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Input;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
@@ -7,6 +9,7 @@ import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import java.util.HashMap;
 import java.util.Map;
 
+import it.traininground.badluck.input.InputHandler;
 import it.traininground.badluck.util.ShapeDrawerUtil;
 import space.earlygrey.shapedrawer.ShapeDrawer;
 
@@ -63,4 +66,15 @@ public class IsoMapSimpleRenderer extends IsoMapRenderer {
     public void setVisibleLayerLevel(int visibleLayerLevel) {
         this.visibleLayerLevel = visibleLayerLevel;
     }
+
+    public final InputHandler inputHandler = new InputHandler() {
+        @Override
+        public void scrolled(int amount) {
+            if (Gdx.input.isKeyPressed(Input.Keys.CONTROL_LEFT)) {
+                IsoMapSimpleRenderer.this.setVisibleLayerLevel(Math.min(Math.max(0, IsoMapSimpleRenderer.this.getVisibleLayerLevel() - amount), IsoMapSimpleRenderer.this.getIsoMap().getLayers()-1));
+            }
+        }
+    };
+
+
 }

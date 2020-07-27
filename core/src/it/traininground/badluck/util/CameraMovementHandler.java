@@ -1,5 +1,6 @@
 package it.traininground.badluck.util;
 
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.graphics.Camera;
 import com.badlogic.gdx.math.Vector3;
@@ -23,7 +24,7 @@ public class CameraMovementHandler extends InputHandler {
     private int cameraSpeed = 800;
 
     public CameraMovementHandler(Camera camera) {
-        super(EventType.MOUSE_MOVED, EventType.SCROLLED, EventType.KEY_DOWN, EventType.KEY_UP, EventType.TOUCH_DOWN, EventType.TOUCH_UP, EventType.TOUCH_DRAGGED);
+        super();
         this.camera = camera;
     }
 
@@ -114,9 +115,10 @@ public class CameraMovementHandler extends InputHandler {
 
     @Override
     public void scrolled(int amount) {
-        camera.viewportWidth = Math.max(0, camera.viewportWidth + (GameInfo.WIDTH / 20f) * amount);
-        camera.viewportHeight = Math.max(0, camera.viewportHeight + (GameInfo.HEIGHT / 20f) * amount);
+        if (!Gdx.input.isKeyPressed(Input.Keys.CONTROL_LEFT)) {
+            camera.viewportWidth = Math.max(GameInfo.WIDTH, camera.viewportWidth + (GameInfo.WIDTH / 20f) * amount);
+            camera.viewportHeight = Math.max(GameInfo.HEIGHT, camera.viewportHeight + (GameInfo.HEIGHT / 20f) * amount);
+        }
     }
-
 
 }

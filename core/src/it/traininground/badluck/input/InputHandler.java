@@ -19,7 +19,11 @@ public class InputHandler {
     protected HashSet<EventType> enabledEvents;
 
     public InputHandler(EventType ...enabledEvents) {
-        this.enabledEvents = new HashSet<>(Arrays.asList(enabledEvents));
+        if (enabledEvents == null || enabledEvents.length == 0) {
+            this.enabledEvents = new HashSet<>(Arrays.asList(EventType.values()));
+        } else {
+            this.enabledEvents = new HashSet<>(Arrays.asList(enabledEvents));
+        }
     }
 
     public void keyDown(int keycode) {}
