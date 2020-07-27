@@ -45,9 +45,6 @@ public class IsoMapRenderer {
     }
 
     public void draw(SpriteBatch batch) {
-        int srcBlend = batch.getBlendSrcFunc();
-        int dstBlend = batch.getBlendDstFunc();
-        batch.setBlendFunction(GL20.GL_SRC_ALPHA, GL20.GL_SRC_COLOR);
         for (int l = 0; l < isoMap.getLayers(); l++) {
             for (int r = 0; r < isoMap.getRows(); r++) {
                 for (int c = 0; c < isoMap.getColumns(); c++) {
@@ -58,7 +55,6 @@ public class IsoMapRenderer {
                 }
             }
         }
-        batch.setBlendFunction(srcBlend, dstBlend);
     }
 
     public int getX() {

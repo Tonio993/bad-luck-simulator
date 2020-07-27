@@ -20,7 +20,7 @@ import it.traininground.badluck.tiles.TerrainType;
 import it.traininground.badluck.util.GameInfo;
 import it.traininground.badluck.util.CameraMovementHandler;
 
-public class TestScene implements Screen, InputProcessor {
+public class MainTestScene implements Screen, InputProcessor {
 
     private GameMain game;
 
@@ -36,7 +36,7 @@ public class TestScene implements Screen, InputProcessor {
     private Vector3 cameraDraggedStart;
     private Vector3 cameraDraggedTouch;
 
-    public TestScene(GameMain game) {
+    public MainTestScene(GameMain game) {
         this.game = game;
 
         mainCamera = new OrthographicCamera(GameInfo.WIDTH, GameInfo.HEIGHT);
