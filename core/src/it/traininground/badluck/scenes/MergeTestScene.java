@@ -17,7 +17,7 @@ public class MergeTestScene implements Screen {
     public MergeTestScene(GameMain game) {
         this.game = game;
         texAtlas = new TextureAtlas("terrain/terrain.atlas");
-        tex1 = texAtlas.findRegion("terrain_DE");
+        tex1 = texAtlas.findRegion("terrain_DE").getTexture();
         tex2 = texAtlas.findRegion("terrain_DN").getTexture();
 
         tex1.getTextureData().prepare();
