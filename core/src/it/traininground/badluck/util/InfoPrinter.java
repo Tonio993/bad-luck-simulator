@@ -61,7 +61,7 @@ public class InfoPrinter {
         currentHeight = GameInfo.HEIGHT;
         for (String key : infoMap.keySet()) {
             Label label = infoMap.get(key).value;
-            label.setPosition(50 + maxLabelWidth, (currentHeight -= 20));
+            label.setPosition(30 + maxLabelWidth, (currentHeight -= 20));
             label.draw(batch, 1);
         }
         batch.setProjectionMatrix(previousMatrix);

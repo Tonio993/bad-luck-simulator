@@ -1,10 +1,11 @@
 package it.traininground.badluck.tiles;
 
-import com.badlogic.gdx.graphics.g2d.Batch;
+import it.traininground.badluck.scenes.DefaultScene;
 
 public abstract class IsoMapRenderer {
 
-    protected Batch batch;
+    protected DefaultScene scene;
+    protected IsoMap isoMap;
 
     protected int x;
     protected int y;
@@ -12,10 +13,8 @@ public abstract class IsoMapRenderer {
     protected int cellHeight;
     protected int layerHeight;
 
-    protected IsoMap isoMap;
-
-    public IsoMapRenderer(Batch batch, int cellWidth, int cellHeight, int layerHeight, IsoMap isoMap) {
-        this.batch = batch;
+    public IsoMapRenderer(DefaultScene scene, IsoMap isoMap, int cellWidth, int cellHeight, int layerHeight) {
+        this.scene = scene;
         this.cellWidth = cellWidth;
         this.cellHeight = cellHeight;
         this.layerHeight = layerHeight;

@@ -2,17 +2,18 @@ package it.traininground.badluck.tiles;
 
 import com.badlogic.gdx.graphics.Pixmap;
 import com.badlogic.gdx.graphics.Texture;
-import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 
 import java.util.HashMap;
 import java.util.Map;
+
+import it.traininground.badluck.scenes.DefaultScene;
 
 public class IsoMapTotalRenderer extends IsoMapRenderer {
 
     private Texture textureResult;
 
-    public IsoMapTotalRenderer(SpriteBatch batch, int cellWidth, int cellHeight, int layerHeight, IsoMap isoMap) {
-        super(batch, cellWidth, cellHeight, layerHeight, isoMap);
+    public IsoMapTotalRenderer(DefaultScene scene, IsoMap isoMap, int cellWidth, int cellHeight, int layerHeight) {
+        super(scene, isoMap, cellWidth, cellHeight, layerHeight);
 
         Map<TerrainType, Texture> terrainMap = new HashMap<>();
         terrainMap.put(TerrainType.PLAIN, new Texture("terrain/terrain_P.png"));
@@ -55,6 +56,6 @@ public class IsoMapTotalRenderer extends IsoMapRenderer {
     }
 
     public void draw() {
-        batch.draw(textureResult, x, y);
+        scene.getGame().getBatch().draw(textureResult, x, y);
     }
 }

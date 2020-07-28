@@ -1,15 +1,10 @@
 package it.traininground.badluck.scenes;
 
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.GL20;
-import com.badlogic.gdx.graphics.OrthographicCamera;
-import com.badlogic.gdx.utils.viewport.StretchViewport;
-import com.badlogic.gdx.utils.viewport.Viewport;
 
 import it.traininground.badluck.GameMain;
 import it.traininground.badluck.actor.Dude;
-import it.traininground.badluck.input.InputManager;
 import it.traininground.badluck.input.handlers.GameCloseInput;
 import it.traininground.badluck.tiles.IsoMap;
 import it.traininground.badluck.tiles.IsoMapBuilder;
@@ -19,42 +14,19 @@ import it.traininground.badluck.util.CameraMovementHandler;
 import it.traininground.badluck.util.GameInfo;
 import it.traininground.badluck.util.InfoPrinter;
 
-public class MainTestScene implements Screen {
-
-    private GameMain game;
-
-    private OrthographicCamera mainCamera;
-    private Viewport gameViewport;
+public class MainTestScene extends DefaultScene {
 
     private Dude dude;
     IsoMapSimpleRenderer isoMapRenderer;
 
     private CameraMovementHandler mouseEdgeCameraMoving;
 
-    private InputManager inputManager;
-
-
     public MainTestScene(GameMain game) {
-        this.game = game;
-
-        mainCamera = new OrthographicCamera(GameInfo.WIDTH, GameInfo.HEIGHT);
-        mainCamera.position.set(GameInfo.WIDTH/2f, GameInfo.HEIGHT/2f, 0);
-
-        gameViewport = new StretchViewport(GameInfo.WIDTH, GameInfo.HEIGHT);
+        super(game);
 
         dude = new Dude(GameInfo.WIDTH/2f, GameInfo.HEIGHT/2f);
 
-        IsoMap isoMap = new IsoMapBuilder(10, 10, 10).build();
-
-        isoMap.setTile(0, 3, 3, TerrainType.EMPTY);
-        isoMap.setTile(0, 3, 2, TerrainType.EMPTY);
-        isoMap.setTile(0, 2, 2, TerrainType.EMPTY);
-        isoMap.setTile(0, 2, 3, TerrainType.EMPTY);
-        isoMap.setTile(0, 2, 4, TerrainType.EMPTY);
-        isoMap.setTile(0, 3, 4, TerrainType.EMPTY);
-        isoMap.setTile(0, 4, 4, TerrainType.EMPTY);
-        isoMap.setTile(0, 4, 3, TerrainType.EMPTY);
-        isoMap.setTile(0, 4, 2, TerrainType.EMPTY);
+        IsoMap isoMap = new IsoMapBuilder(10, 10, 10).setBaseLayer(0).build();
 
         isoMap.setTile(1, 3, 3, TerrainType.PLAIN);
         isoMap.setTile(1, 3, 2, TerrainType.DOWN_NORTH);
@@ -66,10 +38,11 @@ public class MainTestScene implements Screen {
         isoMap.setTile(1, 4, 3, TerrainType.DOWN_EAST);
         isoMap.setTile(1, 4, 2, TerrainType.DOWN_NORTH_EAST);
 
-        isoMapRenderer = new IsoMapSimpleRenderer(game.getBatch(), 64, 32, 32, isoMap, mainCamera);
+        for (int i=1; i<10; i++) {
+            isoMap.setTile(i, 0, 9, TerrainType.PLAIN);
+        }
 
-        inputManager = new InputManager();
-        Gdx.input.setInputProcessor(inputManager);
+        isoMapRenderer = new IsoMapSimpleRenderer(this, isoMap, 64, 32, 32);
 
         mouseEdgeCameraMoving = new CameraMovementHandler(mainCamera);
         inputManager.bind(mouseEdgeCameraMoving.inputHandler);
