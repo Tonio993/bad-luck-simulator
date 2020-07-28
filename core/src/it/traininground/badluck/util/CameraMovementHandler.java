@@ -7,7 +7,7 @@ import com.badlogic.gdx.math.Vector3;
 
 import it.traininground.badluck.input.InputHandler;
 
-public class CameraMovementHandler extends InputHandler {
+public class CameraMovementHandler {
 
     private final Camera camera;
 
@@ -74,51 +74,54 @@ public class CameraMovementHandler extends InputHandler {
         }
     }
 
-    @Override
-    public void keyDown(int keycode) {
-        checkKeyCameraMovement(keycode, false);
-    }
-
-    @Override
-    public void keyUp(int keycode) {
-        checkKeyCameraMovement(keycode, true);
-    }
-
-    public void touchDown(int screenX, int screenY, int pointer, int button) {
-        Vector3 touchPoint = camera.unproject(new Vector3(screenX, screenY, 0));
-        if (button == Input.Buttons.MIDDLE) {
-            isCameraDragged = true;
-            cameraDraggedStart = new Vector3(camera.position.x, camera.position.y, 0);
-            cameraDraggedTouch = touchPoint;
+    public final InputHandler inputHandler = new InputHandler() {
+        @Override
+        public void keyDown(int keycode) {
+            checkKeyCameraMovement(keycode, false);
         }
-    }
 
-    @Override
-    public void touchUp(int screenX, int screenY, int pointer, int button) {
-        if (button == Input.Buttons.MIDDLE) {
-            isCameraDragged = false;
+        @Override
+        public void keyUp(int keycode) {
+            checkKeyCameraMovement(keycode, true);
         }
-    }
 
-    @Override
-    public void touchDragged(int screenX, int screenY, int pointer) {
-        Vector3 touchPoint = camera.unproject(new Vector3(screenX, screenY, 0));
-        if (isCameraDragged) {
-            camera.position.set(cameraDraggedStart.sub(touchPoint.sub(cameraDraggedTouch)));
+        @Override
+        public void touchDown(int screenX, int screenY, int pointer, int button) {
+            Vector3 touchPoint = camera.unproject(new Vector3(screenX, screenY, 0));
+            if (button == Input.Buttons.MIDDLE) {
+                isCameraDragged = true;
+                cameraDraggedStart = new Vector3(camera.position.x, camera.position.y, 0);
+                cameraDraggedTouch = touchPoint;
+            }
         }
-    }
 
-    @Override
-    public void mouseMoved(int screenX, int screenY) {
-        checkMousePosition(screenX, screenY);
-    }
-
-    @Override
-    public void scrolled(int amount) {
-        if (!Gdx.input.isKeyPressed(Input.Keys.CONTROL_LEFT)) {
-            camera.viewportWidth = Math.max(GameInfo.WIDTH, camera.viewportWidth + (GameInfo.WIDTH / 20f) * amount);
-            camera.viewportHeight = Math.max(GameInfo.HEIGHT, camera.viewportHeight + (GameInfo.HEIGHT / 20f) * amount);
+        @Override
+        public void touchUp(int screenX, int screenY, int pointer, int button) {
+            if (button == Input.Buttons.MIDDLE) {
+                isCameraDragged = false;
+            }
         }
-    }
+
+        @Override
+        public void touchDragged(int screenX, int screenY, int pointer) {
+            Vector3 touchPoint = camera.unproject(new Vector3(screenX, screenY, 0));
+            if (isCameraDragged) {
+                camera.position.set(cameraDraggedStart.sub(touchPoint.sub(cameraDraggedTouch)));
+            }
+        }
+
+        @Override
+        public void mouseMoved(int screenX, int screenY) {
+            checkMousePosition(screenX, screenY);
+        }
+
+        @Override
+        public void scrolled(int amount) {
+            if (Gdx.input.isKeyPressed(Input.Keys.CONTROL_LEFT)) {
+                camera.viewportWidth = Math.max(GameInfo.WIDTH, camera.viewportWidth + (GameInfo.WIDTH / 20f) * amount);
+                camera.viewportHeight = Math.max(GameInfo.HEIGHT, camera.viewportHeight + (GameInfo.HEIGHT / 20f) * amount);
+            }
+        }
+    };
 
 }

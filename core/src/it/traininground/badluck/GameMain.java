@@ -12,18 +12,6 @@ public class GameMain extends Game {
 	public void create () {
 		this.batch = new SpriteBatch();
 		setScreen(new MainTestScene(this));
-//		try {
-//			final String VERTEX = FileUtil.readFile(FileUtil.getResourceAsStream("shader/shader.vert"));
-//			final String FRAGMENT = FileUtil.readFile(FileUtil.getResourceAsStream("shader/shader.frag"));
-//			ShaderProgram program = new ShaderProgram(VERTEX, FRAGMENT);
-//			if (program.getLog().length() != 0) {
-//				System.out.println(program.getLog());
-//			}
-//			batch = new SpriteBatch(1000, program);
-//			setScreen(new TestScene(this));
-//		} catch (IOException e) {
-//			e.printStackTrace();
-//		}
 	}
 
 	@Override

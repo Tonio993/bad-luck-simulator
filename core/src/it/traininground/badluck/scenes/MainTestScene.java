@@ -10,12 +10,14 @@ import com.badlogic.gdx.utils.viewport.Viewport;
 import it.traininground.badluck.GameMain;
 import it.traininground.badluck.actor.Dude;
 import it.traininground.badluck.input.InputManager;
+import it.traininground.badluck.input.handlers.GameCloseInput;
 import it.traininground.badluck.tiles.IsoMap;
 import it.traininground.badluck.tiles.IsoMapBuilder;
 import it.traininground.badluck.tiles.IsoMapSimpleRenderer;
 import it.traininground.badluck.tiles.TerrainType;
 import it.traininground.badluck.util.CameraMovementHandler;
 import it.traininground.badluck.util.GameInfo;
+import it.traininground.badluck.util.InfoPrinter;
 
 public class MainTestScene implements Screen {
 
@@ -42,7 +44,7 @@ public class MainTestScene implements Screen {
 
         dude = new Dude(GameInfo.WIDTH/2f, GameInfo.HEIGHT/2f);
 
-        IsoMap isoMap = new IsoMapBuilder(10, 10, 10).setBaseLayer(0).build();
+        IsoMap isoMap = new IsoMapBuilder(10, 10, 10).build();
 
         isoMap.setTile(0, 3, 3, TerrainType.EMPTY);
         isoMap.setTile(0, 3, 2, TerrainType.EMPTY);
@@ -64,26 +66,16 @@ public class MainTestScene implements Screen {
         isoMap.setTile(1, 4, 3, TerrainType.DOWN_EAST);
         isoMap.setTile(1, 4, 2, TerrainType.DOWN_NORTH_EAST);
 
-        isoMapRenderer = new IsoMapSimpleRenderer(game.getBatch(), 64, 32, 32, isoMap);
-
-        new Thread(new IsoMapRunnable(isoMap) {
-            @Override
-            public void run() {
-                try {
-                    Thread.sleep(2000);
-                    isoMap.setTile(1, 7, 7, TerrainType.PLAIN);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
-            }
-        }).start();
+        isoMapRenderer = new IsoMapSimpleRenderer(game.getBatch(), 64, 32, 32, isoMap, mainCamera);
 
         inputManager = new InputManager();
         Gdx.input.setInputProcessor(inputManager);
 
         mouseEdgeCameraMoving = new CameraMovementHandler(mainCamera);
-        inputManager.bind(mouseEdgeCameraMoving);
+        inputManager.bind(mouseEdgeCameraMoving.inputHandler);
         inputManager.bind(isoMapRenderer.inputHandler);
+        inputManager.bind(new GameCloseInput());
+
     }
 
     @Override
@@ -102,6 +94,8 @@ public class MainTestScene implements Screen {
 
         isoMapRenderer.draw();
         dude.draw(game.getBatch(), delta);
+
+        InfoPrinter.draw(game.getBatch());
 
         game.getBatch().end();
 
@@ -132,19 +126,5 @@ public class MainTestScene implements Screen {
     @Override
     public void dispose() {
         dude.dispose();
-    }
-
-    static abstract class IsoMapRunnable implements Runnable {
-
-        protected IsoMap isoMap;
-
-        public IsoMapRunnable(IsoMap isoMap) {
-            this.isoMap = isoMap;
-        }
-
-        @Override
-        public void run() {
-
-        }
     }
 }
