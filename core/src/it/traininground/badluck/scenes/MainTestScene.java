@@ -7,7 +7,7 @@ import it.traininground.badluck.GameMain;
 import it.traininground.badluck.actor.Dude;
 import it.traininground.badluck.input.handlers.GameCloseInput;
 import it.traininground.badluck.tiles.TilesMap;
-import it.traininground.badluck.tiles.IsoMapBuilder;
+import it.traininground.badluck.tiles.TilesMapBuilder;
 import it.traininground.badluck.tiles.IsoMapSimpleRenderer;
 import it.traininground.badluck.tiles.TerrainType;
 import it.traininground.badluck.util.CameraMovementHandler;
@@ -26,7 +26,7 @@ public class MainTestScene extends DefaultScene {
 
         dude = new Dude(GameInfo.WIDTH/2f, GameInfo.HEIGHT/2f);
 
-        TilesMap tilesMap = new IsoMapBuilder(10, 10, 10).setBaseLayer(0).build();
+        TilesMap tilesMap = new TilesMapBuilder(10, 10, 10).setBaseLayer(0).build();
 
         tilesMap.setTile(1, 3, 3, TerrainType.PLAIN);
         tilesMap.setTile(1, 3, 2, TerrainType.DOWN_NORTH);
@@ -42,7 +42,7 @@ public class MainTestScene extends DefaultScene {
             tilesMap.setTile(i, 0, 9, TerrainType.PLAIN);
         }
 
-        isoMapRenderer = new IsoMapSimpleRenderer(this, tilesMap, 64, 32, 16);
+        isoMapRenderer = new IsoMapSimpleRenderer(this, tilesMap, 64, 32, 32);
 
         mouseEdgeCameraMoving = new CameraMovementHandler(mainCamera);
         inputManager.bind(mouseEdgeCameraMoving.inputHandler);

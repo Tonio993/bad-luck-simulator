@@ -1,6 +1,6 @@
 package it.traininground.badluck.tiles;
 
-public class IsoMapBuilder {
+public class TilesMapBuilder {
 
     private static final TerrainType DEFAULT_GROUND_TILE = TerrainType.PLAIN;
     private static final TerrainType DEFAULT_EMPTY_TILE = TerrainType.EMPTY;
@@ -13,7 +13,7 @@ public class IsoMapBuilder {
     private TerrainType defaultGroundTile;
     private TerrainType defaultEmptyTile;
 
-    public IsoMapBuilder(int layers, int rows, int columns) {
+    public TilesMapBuilder(int layers, int rows, int columns) {
         this.defaultGroundTile = DEFAULT_GROUND_TILE;
         this.defaultEmptyTile = DEFAULT_EMPTY_TILE;
         setLayers(layers);
@@ -26,7 +26,7 @@ public class IsoMapBuilder {
         return layers;
     }
 
-    public IsoMapBuilder setLayers(int layers) {
+    public TilesMapBuilder setLayers(int layers) {
         this.layers = layers;
         return this;
     }
@@ -35,7 +35,7 @@ public class IsoMapBuilder {
         return rows;
     }
 
-    public IsoMapBuilder setRows(int rows) {
+    public TilesMapBuilder setRows(int rows) {
         this.rows = rows;
         return this;
     }
@@ -44,7 +44,7 @@ public class IsoMapBuilder {
         return columns;
     }
 
-    public IsoMapBuilder setColumns(int columns) {
+    public TilesMapBuilder setColumns(int columns) {
         this.columns = columns;
         return this;
     }
@@ -53,7 +53,7 @@ public class IsoMapBuilder {
         return baseLayer;
     }
 
-    public IsoMapBuilder setBaseLayer(int baseLayer) {
+    public TilesMapBuilder setBaseLayer(int baseLayer) {
         this.baseLayer = baseLayer;
         return this;
     }
@@ -62,7 +62,7 @@ public class IsoMapBuilder {
         return defaultGroundTile;
     }
 
-    public IsoMapBuilder setDefaultGroundTile(TerrainType defaultGroundTile) {
+    public TilesMapBuilder setDefaultGroundTile(TerrainType defaultGroundTile) {
         this.defaultGroundTile = defaultGroundTile;
         return this;
     }
@@ -71,7 +71,7 @@ public class IsoMapBuilder {
         return defaultEmptyTile;
     }
 
-    public IsoMapBuilder setDefaultEmptyTile(TerrainType defaultEmptyTile) {
+    public TilesMapBuilder setDefaultEmptyTile(TerrainType defaultEmptyTile) {
         this.defaultEmptyTile = defaultEmptyTile;
         return this;
     }

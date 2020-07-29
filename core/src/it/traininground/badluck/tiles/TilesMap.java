@@ -11,7 +11,7 @@ public class TilesMap {
     private final int rows;
     private final int columns;
 
-    TilesMap(IsoMapBuilder builder) {
+    TilesMap(TilesMapBuilder builder) {
         this.layers = builder.getLayers();
         this.rows = builder.getRows();
         this.columns = builder.getColumns();
