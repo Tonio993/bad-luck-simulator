@@ -73,6 +73,9 @@ public class MainTestScene extends DefaultScene {
         game.getBatch().end();
 
         game.getBatch().setProjectionMatrix(mainCamera.combined);
+
+        InfoPrinter.put("fps", Gdx.graphics.getFramesPerSecond());
+
         mainCamera.update();
     }
 

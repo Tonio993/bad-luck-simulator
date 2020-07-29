@@ -12,7 +12,7 @@ import java.util.Map;
 
 import it.traininground.badluck.input.InputHandler;
 import it.traininground.badluck.scenes.DefaultScene;
-import it.traininground.badluck.util.InfoPrinter;
+import it.traininground.badluck.util.MathUtil;
 import it.traininground.badluck.util.ShapeDrawerUtil;
 import space.earlygrey.shapedrawer.ShapeDrawer;
 
@@ -52,7 +52,7 @@ public class IsoMapSimpleRenderer extends IsoMapRenderer {
 
     }
 
-    private void setHighlightedTile(int screenX, int screenY) {
+    private void selectHighlightedTile(int screenX, int screenY) {
         int currentLayer = getVisibleLayerLevel();
         highlightedTile = false;
         while (currentLayer >= 0) {
@@ -72,9 +72,6 @@ public class IsoMapSimpleRenderer extends IsoMapRenderer {
         if (!highlightedTile) {
             highlightedLayer = highlightedRow = highlightedColumn = -1;
         }
-        InfoPrinter.put("layer", highlightedLayer);
-        InfoPrinter.put("row", highlightedRow);
-        InfoPrinter.put("column", highlightedColumn);
     }
 
     @Override
@@ -96,6 +93,7 @@ public class IsoMapSimpleRenderer extends IsoMapRenderer {
                     }
                 }
             }
+
             // DEBUG
             if (debugMode) {
                 for (int r = 0; r < tilesMap.getRows(); r++) {
@@ -112,8 +110,8 @@ public class IsoMapSimpleRenderer extends IsoMapRenderer {
                 }
             }
             // FINE DEBUG
+
             if (highlightedTile && highlightedLayer == l) {
-                InfoPrinter.put("current tile", tilesMap.getTile(visibleLayerLevel, highlightedRow, highlightedColumn));
                 float offsetX = x + (highlightedRow - highlightedColumn) * (cellWidth/2f);
                 float offsetY = y - (highlightedRow + highlightedColumn) * (cellHeight/2f) + highlightedLayer * layerHeight;
                 shapeDrawer.setDefaultLineWidth(5);
@@ -139,7 +137,7 @@ public class IsoMapSimpleRenderer extends IsoMapRenderer {
 
     public void setVisibleLayerLevel(int visibleLayerLevel) {
         this.visibleLayerLevel = visibleLayerLevel;
-        setHighlightedTile(Gdx.input.getX(), Gdx.input.getY());
+        selectHighlightedTile(Gdx.input.getX(), Gdx.input.getY());
     }
 
     public boolean isDebugMode() {
@@ -148,6 +146,47 @@ public class IsoMapSimpleRenderer extends IsoMapRenderer {
 
     public void setDebugMode(boolean debugMode) {
         this.debugMode = debugMode;
+    }
+
+    public boolean isHighlightedTile() {
+        return highlightedTile;
+    }
+
+    public int getHighlightedLayer() {
+        return highlightedLayer;
+    }
+
+    public int getHighlightedRow() {
+        return highlightedRow;
+    }
+
+    public int getHighlightedColumn() {
+        return highlightedColumn;
+    }
+
+    public Vector3 getHighLightedTile() {
+        if (!highlightedTile) {
+            return null;
+        }
+        return new Vector3(highlightedLayer, highlightedRow, highlightedColumn);
+    }
+
+    public void removeHighlightedTile() {
+        this.highlightedTile = false;
+        this.highlightedLayer = -1;
+        this.highlightedRow = -1;
+        this.highlightedColumn = -1;
+    }
+
+    public void setHighlightedTile(Vector3 tile) {
+        setHighlightedTile((int) Math.floor(tile.x), (int) Math.floor(tile.y), (int) Math.floor(tile.z));
+    }
+
+    public void setHighlightedTile(int layer, int row, int column) {
+        this.highlightedTile = true;
+        this.highlightedLayer = (int) MathUtil.between(layer, 0, tilesMap.getLayers() -1);
+        this.highlightedRow = (int) MathUtil.between(0, tilesMap.getRows() -1, row);
+        this.highlightedColumn = (int) MathUtil.between(0, tilesMap.getColumns() -1, column);
     }
 
     public final InputHandler inputHandler = new InputHandler() {
@@ -159,8 +198,26 @@ public class IsoMapSimpleRenderer extends IsoMapRenderer {
         }
 
         @Override
+        public void touchDown(int screenX, int screenY, int pointer, int button) {
+            if (isHighlightedTile()) {
+                TerrainType terrain;
+                switch (button) {
+                    case Input.Buttons.LEFT:
+                        terrain = TerrainType.PLAIN;
+                        break;
+                    case Input.Buttons.RIGHT:
+                        terrain = TerrainType.EMPTY;
+                        break;
+                    default:
+                        return;
+                }
+                tilesMap.setTile(highlightedLayer + 1, highlightedRow, highlightedColumn, terrain);
+            }
+        }
+
+        @Override
         public void mouseMoved(int screenX, int screenY) {
-            setHighlightedTile(screenX, screenY);
+            selectHighlightedTile(screenX, screenY);
         }
     };
 
