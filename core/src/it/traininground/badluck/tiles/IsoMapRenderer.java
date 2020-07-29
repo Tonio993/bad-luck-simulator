@@ -5,7 +5,7 @@ import it.traininground.badluck.scenes.DefaultScene;
 public abstract class IsoMapRenderer {
 
     protected DefaultScene scene;
-    protected IsoMap isoMap;
+    protected TilesMap tilesMap;
 
     protected int x;
     protected int y;
@@ -13,12 +13,12 @@ public abstract class IsoMapRenderer {
     protected int cellHeight;
     protected int layerHeight;
 
-    public IsoMapRenderer(DefaultScene scene, IsoMap isoMap, int cellWidth, int cellHeight, int layerHeight) {
+    public IsoMapRenderer(DefaultScene scene, TilesMap tilesMap, int cellWidth, int cellHeight, int layerHeight) {
         this.scene = scene;
         this.cellWidth = cellWidth;
         this.cellHeight = cellHeight;
         this.layerHeight = layerHeight;
-        this.isoMap = isoMap;
+        this.tilesMap = tilesMap;
     }
 
     public abstract void draw();
@@ -55,11 +55,11 @@ public abstract class IsoMapRenderer {
         this.cellHeight = cellHeight;
     }
 
-    public IsoMap getIsoMap() {
-        return isoMap;
+    public TilesMap getTilesMap() {
+        return tilesMap;
     }
 
-    public void setIsoMap(IsoMap isoMap) {
-        this.isoMap = isoMap;
+    public void setTilesMap(TilesMap tilesMap) {
+        this.tilesMap = tilesMap;
     }
 }

@@ -23,10 +23,10 @@ public class IsoMapSimplePrototypeRenderer extends IsoMapRenderer {
     private int highlightedRow = -1;
     private int highlightedColumn = -1;
 
-    public IsoMapSimplePrototypeRenderer(DefaultScene scene, IsoMap isoMap, int cellWidth, int cellHeight, int layerHeight) {
-        super(scene, isoMap, cellWidth, cellHeight, layerHeight);
+    public IsoMapSimplePrototypeRenderer(DefaultScene scene, TilesMap tilesMap, int cellWidth, int cellHeight, int layerHeight) {
+        super(scene, tilesMap, cellWidth, cellHeight, layerHeight);
         shapeDrawer = ShapeDrawerUtil.createShapeDrawer(scene.getGame().getBatch());
-        this.visibleLayerLevel = isoMap.getLayers() - 1;
+        this.visibleLayerLevel = tilesMap.getLayers() - 1;
 
         TextureAtlas terrain = new TextureAtlas("terrain/terrain.atlas");
         terrainMap = new HashMap<>();
@@ -43,10 +43,10 @@ public class IsoMapSimplePrototypeRenderer extends IsoMapRenderer {
     }
 
     private void setSelectedCell(int screenX, int screenY) {
-        Vector3 cameraPoint = scene.getMainCamera().unproject(new Vector3(screenX, screenY + (getVisibleLayerLevel() - isoMap.getLayers() + 1) * layerHeight, 0));
+        Vector3 cameraPoint = scene.getMainCamera().unproject(new Vector3(screenX, screenY + (getVisibleLayerLevel() - tilesMap.getLayers() + 1) * layerHeight, 0));
         highlightedRow = (int) Math.floor((cameraPoint.x - x) / (cellWidth) + (cameraPoint.y - y) / (cellHeight));
         highlightedColumn = (int) Math.floor((cameraPoint.y - y) / (cellHeight) - (cameraPoint.x - x) / (cellWidth));
-        if (highlightedRow < 0 || highlightedRow >= isoMap.getRows() || highlightedColumn < 0 || highlightedColumn >= isoMap.getColumns()) {
+        if (highlightedRow < 0 || highlightedRow >= tilesMap.getRows() || highlightedColumn < 0 || highlightedColumn >= tilesMap.getColumns()) {
             highlightedRow = -1;
             highlightedColumn = -1;
         }
@@ -55,9 +55,9 @@ public class IsoMapSimplePrototypeRenderer extends IsoMapRenderer {
     @Override
     public void draw() {
         for (int l = 0; l <= visibleLayerLevel; l++) {
-            for (int r = 0; r < isoMap.getRows(); r++) {
-                for (int c = 0; c < isoMap.getColumns(); c++) {
-                    TerrainType terrainType = isoMap.getTile(l, r, c);
+            for (int r = 0; r < tilesMap.getRows(); r++) {
+                for (int c = 0; c < tilesMap.getColumns(); c++) {
+                    TerrainType terrainType = tilesMap.getTile(l, r, c);
                     if (terrainType != TerrainType.EMPTY) {
                         scene.getGame().getBatch().draw(terrainMap.get(terrainType), x + ((r-c-1) * (cellWidth/2f)), y + (l-1) * layerHeight - ((r+c) * (cellHeight/2f)));
                     }
@@ -66,7 +66,7 @@ public class IsoMapSimplePrototypeRenderer extends IsoMapRenderer {
         }
 
         float originX = x;
-        float originY = y + (getVisibleLayerLevel() - isoMap.getLayers() + 1) * layerHeight;
+        float originY = y + (getVisibleLayerLevel() - tilesMap.getLayers() + 1) * layerHeight;
 
         if (highlightedRow != -1 && highlightedColumn != -1) {
             float offsetX = originX + (highlightedRow - highlightedColumn) * (cellWidth/2f);
@@ -79,8 +79,8 @@ public class IsoMapSimplePrototypeRenderer extends IsoMapRenderer {
         shapeDrawer.setDefaultLineWidth(1);
         shapeDrawer.setColor(Color.BLACK);
         shapeDrawer.filledCircle(originX, originY, 5);
-        shapeDrawer.line(0, originY, (isoMap.getRows() + isoMap.getColumns()) * cellWidth/2f, originY);
-        shapeDrawer.line(0, originY, 0, originY + (isoMap.getRows() + isoMap.getColumns() + 1) * cellHeight/2f + layerHeight * isoMap.getLayers());
+        shapeDrawer.line(0, originY, (tilesMap.getRows() + tilesMap.getColumns()) * cellWidth/2f, originY);
+        shapeDrawer.line(0, originY, 0, originY + (tilesMap.getRows() + tilesMap.getColumns() + 1) * cellHeight/2f + layerHeight * tilesMap.getLayers());
 
     }
 
@@ -97,7 +97,7 @@ public class IsoMapSimplePrototypeRenderer extends IsoMapRenderer {
         @Override
         public void scrolled(int amount) {
             if (!Gdx.input.isKeyPressed(Input.Keys.CONTROL_LEFT)) {
-                IsoMapSimplePrototypeRenderer.this.setVisibleLayerLevel(Math.min(Math.max(0, IsoMapSimplePrototypeRenderer.this.getVisibleLayerLevel() - amount), IsoMapSimplePrototypeRenderer.this.getIsoMap().getLayers()-1));
+                IsoMapSimplePrototypeRenderer.this.setVisibleLayerLevel(Math.min(Math.max(0, IsoMapSimplePrototypeRenderer.this.getVisibleLayerLevel() - amount), IsoMapSimplePrototypeRenderer.this.getTilesMap().getLayers()-1));
             }
         }
 

@@ -12,8 +12,8 @@ public class IsoMapTotalRenderer extends IsoMapRenderer {
 
     private Texture textureResult;
 
-    public IsoMapTotalRenderer(DefaultScene scene, IsoMap isoMap, int cellWidth, int cellHeight, int layerHeight) {
-        super(scene, isoMap, cellWidth, cellHeight, layerHeight);
+    public IsoMapTotalRenderer(DefaultScene scene, TilesMap tilesMap, int cellWidth, int cellHeight, int layerHeight) {
+        super(scene, tilesMap, cellWidth, cellHeight, layerHeight);
 
         Map<TerrainType, Texture> terrainMap = new HashMap<>();
         terrainMap.put(TerrainType.PLAIN, new Texture("terrain/terrain_P.png"));
@@ -32,16 +32,16 @@ public class IsoMapTotalRenderer extends IsoMapRenderer {
             pixmapMap.put(entry.getKey(), entry.getValue().getTextureData().consumePixmap());
         }
 
-        int gridSizeFactor = isoMap.getRows() + isoMap.getColumns();
+        int gridSizeFactor = tilesMap.getRows() + tilesMap.getColumns();
 
-        Pixmap pixmap = new Pixmap(gridSizeFactor * cellWidth/2, (gridSizeFactor + 1) * cellHeight/2 + layerHeight * isoMap.getLayers() , Pixmap.Format.RGBA8888);
+        Pixmap pixmap = new Pixmap(gridSizeFactor * cellWidth/2, (gridSizeFactor + 1) * cellHeight/2 + layerHeight * tilesMap.getLayers() , Pixmap.Format.RGBA8888);
 
-        for (int l = 0; l < isoMap.getLayers(); l++) {
-            for (int r = 0; r < isoMap.getRows(); r++) {
-                for (int c = 0; c < isoMap.getColumns(); c++) {
-                    TerrainType terrainType = isoMap.getTile(l, r, c);
+        for (int l = 0; l < tilesMap.getLayers(); l++) {
+            for (int r = 0; r < tilesMap.getRows(); r++) {
+                for (int c = 0; c < tilesMap.getColumns(); c++) {
+                    TerrainType terrainType = tilesMap.getTile(l, r, c);
                     if (terrainType != TerrainType.EMPTY) {
-                        pixmap.drawPixmap(pixmapMap.get(terrainType), x + ((r-c + (gridSizeFactor - 1) / 2) * (cellWidth/2)), y + (isoMap.getLayers() - l) * layerHeight + ((r+c-1) * (cellHeight/2)));
+                        pixmap.drawPixmap(pixmapMap.get(terrainType), x + ((r-c + (gridSizeFactor - 1) / 2) * (cellWidth/2)), y + (tilesMap.getLayers() - l) * layerHeight + ((r+c-1) * (cellHeight/2)));
                     }
                 }
             }

@@ -6,7 +6,7 @@ import com.badlogic.gdx.graphics.GL20;
 import it.traininground.badluck.GameMain;
 import it.traininground.badluck.actor.Dude;
 import it.traininground.badluck.input.handlers.GameCloseInput;
-import it.traininground.badluck.tiles.IsoMap;
+import it.traininground.badluck.tiles.TilesMap;
 import it.traininground.badluck.tiles.IsoMapBuilder;
 import it.traininground.badluck.tiles.IsoMapSimpleRenderer;
 import it.traininground.badluck.tiles.TerrainType;
@@ -26,23 +26,23 @@ public class MainTestScene extends DefaultScene {
 
         dude = new Dude(GameInfo.WIDTH/2f, GameInfo.HEIGHT/2f);
 
-        IsoMap isoMap = new IsoMapBuilder(10, 10, 10).setBaseLayer(0).build();
+        TilesMap tilesMap = new IsoMapBuilder(10, 10, 10).setBaseLayer(0).build();
 
-        isoMap.setTile(1, 3, 3, TerrainType.PLAIN);
-        isoMap.setTile(1, 3, 2, TerrainType.DOWN_NORTH);
-        isoMap.setTile(1, 2, 2, TerrainType.DOWN_NORTH_WEST);
-        isoMap.setTile(1, 2, 3, TerrainType.DOWN_WEST);
-        isoMap.setTile(1, 2, 4, TerrainType.DOWN_SOUTH_WEST);
-        isoMap.setTile(1, 3, 4, TerrainType.DOWN_SOUTH);
-        isoMap.setTile(1, 4, 4, TerrainType.DOWN_SOUTH_EAST);
-        isoMap.setTile(1, 4, 3, TerrainType.DOWN_EAST);
-        isoMap.setTile(1, 4, 2, TerrainType.DOWN_NORTH_EAST);
+        tilesMap.setTile(1, 3, 3, TerrainType.PLAIN);
+        tilesMap.setTile(1, 3, 2, TerrainType.DOWN_NORTH);
+        tilesMap.setTile(1, 2, 2, TerrainType.DOWN_NORTH_WEST);
+        tilesMap.setTile(1, 2, 3, TerrainType.DOWN_WEST);
+        tilesMap.setTile(1, 2, 4, TerrainType.DOWN_SOUTH_WEST);
+        tilesMap.setTile(1, 3, 4, TerrainType.DOWN_SOUTH);
+        tilesMap.setTile(1, 4, 4, TerrainType.DOWN_SOUTH_EAST);
+        tilesMap.setTile(1, 4, 3, TerrainType.DOWN_EAST);
+        tilesMap.setTile(1, 4, 2, TerrainType.DOWN_NORTH_EAST);
 
         for (int i=1; i<10; i++) {
-            isoMap.setTile(i, 0, 9, TerrainType.PLAIN);
+            tilesMap.setTile(i, 0, 9, TerrainType.PLAIN);
         }
 
-        isoMapRenderer = new IsoMapSimpleRenderer(this, isoMap, 64, 32, 32);
+        isoMapRenderer = new IsoMapSimpleRenderer(this, tilesMap, 64, 32, 16);
 
         mouseEdgeCameraMoving = new CameraMovementHandler(mainCamera);
         inputManager.bind(mouseEdgeCameraMoving.inputHandler);

@@ -76,7 +76,7 @@ public class IsoMapBuilder {
         return this;
     }
 
-    public IsoMap build() {
-        return new IsoMap(this);
+    public TilesMap build() {
+        return new TilesMap(this);
     }
 }

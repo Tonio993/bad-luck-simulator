@@ -2,7 +2,7 @@ package it.traininground.badluck.tiles;
 
 import com.badlogic.gdx.utils.Array;
 
-public class IsoMap {
+public class TilesMap {
 
     private static final TerrainType DEFAULT_TILE = TerrainType.PLAIN;
 
@@ -11,7 +11,7 @@ public class IsoMap {
     private final int rows;
     private final int columns;
 
-    IsoMap(IsoMapBuilder builder) {
+    TilesMap(IsoMapBuilder builder) {
         this.layers = builder.getLayers();
         this.rows = builder.getRows();
         this.columns = builder.getColumns();
@@ -33,11 +33,11 @@ public class IsoMap {
         }
     }
 
-    public IsoMap(int layers, int rows, int columns) {
+    public TilesMap(int layers, int rows, int columns) {
         this(layers, rows, columns, DEFAULT_TILE);
     }
 
-    public IsoMap(int layers, int rows, int columns, TerrainType defaultTile) {
+    public TilesMap(int layers, int rows, int columns, TerrainType defaultTile) {
         this.layers = layers;
         this.rows = rows;
         this.columns = columns;
