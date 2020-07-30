@@ -11,7 +11,7 @@ import it.traininground.badluck.tiles.TilesMap;
 import it.traininground.badluck.tiles.TilesMapBuilder;
 import it.traininground.badluck.util.CameraMovementHandler;
 import it.traininground.badluck.util.GameInfo;
-import it.traininground.badluck.util.InfoPrinter;
+import it.traininground.badluck.util.InfoDrawer;
 
 public class MainTestScene extends DefaultScene {
 
@@ -73,12 +73,12 @@ public class MainTestScene extends DefaultScene {
         isoMapRenderer.draw();
 //        dude.draw(game.getBatch(), delta);
 
-        InfoPrinter.draw(game.getBatch());
+        InfoDrawer.draw(game.getBatch());
 
         game.getBatch().end();
 
 
-        InfoPrinter.put("fps", Gdx.graphics.getFramesPerSecond());
+        InfoDrawer.put("fps", Gdx.graphics.getFramesPerSecond());
 
     }
 

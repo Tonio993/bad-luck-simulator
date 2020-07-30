@@ -14,7 +14,7 @@ import com.badlogic.gdx.utils.viewport.Viewport;
 
 import java.util.LinkedHashMap;
 
-public class InfoPrinter {
+public class InfoDrawer {
 
     private static Viewport viewport;
     private static LinkedHashMap<String, InfoRow> infoMap;
@@ -32,7 +32,7 @@ public class InfoPrinter {
         style = new Label.LabelStyle(font, Color.DARK_GRAY);
     }
 
-    private InfoPrinter() {}
+    private InfoDrawer() {}
 
     public static void put(String label, Object value) {
         if (infoMap.containsKey(label)) {
