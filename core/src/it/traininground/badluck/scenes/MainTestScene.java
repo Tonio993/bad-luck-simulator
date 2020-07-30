@@ -4,19 +4,18 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.GL20;
 
 import it.traininground.badluck.GameMain;
-import it.traininground.badluck.actor.Dude;
 import it.traininground.badluck.input.handlers.GameCloseInput;
-import it.traininground.badluck.tiles.TilesMap;
-import it.traininground.badluck.tiles.TilesMapBuilder;
 import it.traininground.badluck.tiles.IsoMapSimpleRenderer;
 import it.traininground.badluck.tiles.TerrainType;
+import it.traininground.badluck.tiles.TilesMap;
+import it.traininground.badluck.tiles.TilesMapBuilder;
 import it.traininground.badluck.util.CameraMovementHandler;
 import it.traininground.badluck.util.GameInfo;
 import it.traininground.badluck.util.InfoPrinter;
 
 public class MainTestScene extends DefaultScene {
 
-    private Dude dude;
+//    private Dude dude;
     IsoMapSimpleRenderer isoMapRenderer;
 
     private CameraMovementHandler mouseEdgeCameraMoving;
@@ -24,7 +23,7 @@ public class MainTestScene extends DefaultScene {
     public MainTestScene(GameMain game) {
         super(game);
 
-        dude = new Dude(GameInfo.WIDTH/2f, GameInfo.HEIGHT/2f);
+//        dude = new Dude(GameInfo.WIDTH/2f, GameInfo.HEIGHT/2f);
 
         TilesMap tilesMap = new TilesMapBuilder(10, 10, 10).setBaseLayer(0).build();
 
@@ -43,6 +42,9 @@ public class MainTestScene extends DefaultScene {
         }
 
         isoMapRenderer = new IsoMapSimpleRenderer(this, tilesMap, 64, 32, 32);
+        isoMapRenderer.setX(0);
+        isoMapRenderer.setY(GameInfo.HEIGHT/2);
+        isoMapRenderer.setDebugMode(true);
 
         mouseEdgeCameraMoving = new CameraMovementHandler(mainCamera);
         inputManager.bind(mouseEdgeCameraMoving.inputHandler);
@@ -61,22 +63,23 @@ public class MainTestScene extends DefaultScene {
         Gdx.gl.glClearColor(1, 1, 1, 1);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
+
         mouseEdgeCameraMoving.moveCamera(delta);
+        mainCamera.update();
 
         game.getBatch().begin();
+        game.getBatch().setProjectionMatrix(mainCamera.combined);
 
         isoMapRenderer.draw();
-        dude.draw(game.getBatch(), delta);
+//        dude.draw(game.getBatch(), delta);
 
         InfoPrinter.draw(game.getBatch());
 
         game.getBatch().end();
 
-        game.getBatch().setProjectionMatrix(mainCamera.combined);
 
         InfoPrinter.put("fps", Gdx.graphics.getFramesPerSecond());
 
-        mainCamera.update();
     }
 
     @Override
@@ -101,6 +104,6 @@ public class MainTestScene extends DefaultScene {
 
     @Override
     public void dispose() {
-        dude.dispose();
+//        dude.dispose();
     }
 }
