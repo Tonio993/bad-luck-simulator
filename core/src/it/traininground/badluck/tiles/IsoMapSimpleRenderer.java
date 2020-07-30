@@ -83,20 +83,20 @@ public class IsoMapSimpleRenderer extends IsoMapRenderer {
         float currentOffsetY;
         float debugLineOffsetX;
         float debugLineOffsetY;
-        int tilesDrawn = 0;
+        int drawnTiles = 0;
+        int layersDrawn = 0;
         Vector3 cameraPosition = scene.getMainCamera().position;
-        int firstLayer = (int) Math.max(0, (cameraPosition.y - y - GameInfo.HEIGHT/2f + layerHeight) / layerHeight);
-        int lastLayer = (int) Math.min(visibleLayerLevel, (cameraPosition.y - y + GameInfo.HEIGHT/2f + cellHeight/2f * (tilesMap.getRows() + tilesMap.getColumns()) + layerHeight) / layerHeight);
+        int firstLayer = (int) Math.max(0, Math.ceil((cameraPosition.y - y - GameInfo.HEIGHT/2f) / layerHeight));
+        int lastLayer = (int) Math.min(visibleLayerLevel, Math.floor((cameraPosition.y - y + GameInfo.HEIGHT/2f + cellHeight/2f * (tilesMap.getRows() + tilesMap.getColumns())) / layerHeight + 1));
         for (int l = firstLayer; l <= lastLayer; l++) {
             currentLayerHeight = (l - 1) * layerHeight;
             if (!debugMode) {
                 for (int r = 0; r < tilesMap.getRows(); r++) {
                     int firstCell = (int) Math.max(0, cameraPosition.x - x - GameInfo.WIDTH/2f);
-                    InfoPrinter.put("firstCell", firstCell);
                     for (int c = firstCell; c < tilesMap.getColumns(); c++) {
                         TerrainType terrainType = tilesMap.getTile(l, r, c);
                         if (terrainType != TerrainType.EMPTY) {
-                            tilesDrawn++;
+                            drawnTiles++;
                             currentOffsetX = x + (r - c - 1) * cellWidth / 2f;
                             currentOffsetY = y - (r + c + 2) * cellHeight / 2f + currentLayerHeight;
                             scene.getGame().getBatch().draw(terrainMap.get(terrainType), currentOffsetX, currentOffsetY);
@@ -106,17 +106,14 @@ public class IsoMapSimpleRenderer extends IsoMapRenderer {
             } else {
                 // DEBUG
                 for (int r = 0; r < tilesMap.getRows(); r++) {
-                    int firstCell = (int) Math.max(0, -(tilesMap.getRows() - r - 1) + (x - cameraPosition.x - GameInfo.WIDTH/2f + (cellWidth/2f * (tilesMap.getRows() - 1))) / (cellWidth/2f));
-                    int lastCell = (int) Math.min(tilesMap.getColumns(), -(tilesMap.getRows() - r - 1) + (x - cameraPosition.x + GameInfo.WIDTH/2f + (cellWidth/2f * (tilesMap.getRows() + 1))) / (cellWidth/2f));
-                    InfoPrinter.put("x", x);
-                    InfoPrinter.put("camera x", (int) cameraPosition.x);
-                    InfoPrinter.put("cell width", cellWidth);
-                    InfoPrinter.put("firstCell", firstCell);
-                    InfoPrinter.put("lastCell", lastCell);
-                    for (int c = firstCell; c < lastCell; c++) {
+                    int firstCellX = (int) Math.max(0, -(tilesMap.getRows() - r - 1) + (x - cameraPosition.x - GameInfo.WIDTH/2f + (cellWidth/2f * (tilesMap.getRows() - 1))) / (cellWidth/2f));
+                    int lastCellX = (int) Math.min(tilesMap.getColumns(), -(tilesMap.getRows() - r - 1) + (x - cameraPosition.x + GameInfo.WIDTH/2f + (cellWidth/2f * (tilesMap.getRows() + 1))) / (cellWidth/2f));
+                    int firstCellY = (int) Math.max(0, -r + (y - cameraPosition.y - GameInfo.HEIGHT/2f - (cellHeight/2f) + (l-1) * layerHeight) / (layerHeight/2f));
+                    int lastCellY = (int) Math.max(0, -r + (y - cameraPosition.y + GameInfo.HEIGHT/2f + l * layerHeight + cellHeight/2f) / (layerHeight/2f));
+                    for (int c = Math.max(firstCellX, firstCellY); c < Math.min(lastCellX, lastCellY); c++) {
                         TerrainType terrainType = tilesMap.getTile(l, r, c);
                         if (terrainType != TerrainType.EMPTY) {
-                            tilesDrawn++;
+                            drawnTiles++;
                             debugLineOffsetX = x + (r - c) * cellWidth / 2f;
                             debugLineOffsetY = y - (r + c) * cellHeight / 2f + l * layerHeight;
                             shapeDrawer.setDefaultLineWidth(1);
@@ -136,8 +133,8 @@ public class IsoMapSimpleRenderer extends IsoMapRenderer {
                 shapeDrawer.polygon(new float[]{offsetX, offsetY, offsetX + cellWidth/2f, offsetY - cellHeight/2f, offsetX, offsetY - cellHeight, offsetX - cellWidth/2f, offsetY - cellHeight/2f});
             }
 
-            InfoPrinter.put("drawn tiles", tilesDrawn);
         }
+        InfoPrinter.put("drawn tiles", drawnTiles);
 
         if (debugMode) {
             float originX = x;

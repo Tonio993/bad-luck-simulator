@@ -25,7 +25,7 @@ public class MainTestScene extends DefaultScene {
 
 //        dude = new Dude(GameInfo.WIDTH/2f, GameInfo.HEIGHT/2f);
 
-        TilesMap tilesMap = new TilesMapBuilder(10, 10, 10).setBaseLayer(0).build();
+        TilesMap tilesMap = new TilesMapBuilder(10, 10, 10).setBaseLayer(-1).build();
 
         tilesMap.setTile(1, 3, 3, TerrainType.PLAIN);
         tilesMap.setTile(1, 3, 2, TerrainType.DOWN_NORTH);
