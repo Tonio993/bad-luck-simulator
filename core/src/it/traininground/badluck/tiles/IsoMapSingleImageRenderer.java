@@ -6,13 +6,13 @@ import com.badlogic.gdx.graphics.Texture;
 import java.util.HashMap;
 import java.util.Map;
 
-import it.traininground.badluck.scenes.DefaultScene;
+import it.traininground.badluck.scenes.Scene;
 
-public class IsoMapTotalRenderer extends IsoMapRenderer {
+public class IsoMapSingleImageRenderer extends IsoMapRenderer {
 
     private Texture textureResult;
 
-    public IsoMapTotalRenderer(DefaultScene scene, TilesMap tilesMap, int cellWidth, int cellHeight, int layerHeight) {
+    public IsoMapSingleImageRenderer(Scene scene, TilesMap tilesMap, int cellWidth, int cellHeight, int layerHeight) {
         super(scene, tilesMap, cellWidth, cellHeight, layerHeight);
 
         Map<TerrainType, Texture> terrainMap = new HashMap<>();

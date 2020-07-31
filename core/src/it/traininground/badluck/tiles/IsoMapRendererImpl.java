@@ -4,42 +4,58 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
-import com.badlogic.gdx.math.Polygon;
 import com.badlogic.gdx.math.Vector3;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import it.traininground.badluck.input.InputHandler;
-import it.traininground.badluck.scenes.DefaultScene;
+import it.traininground.badluck.scenes.Scene;
+import it.traininground.badluck.tiles.debug.DebugShape;
 import it.traininground.badluck.util.GameInfo;
 import it.traininground.badluck.util.InfoDrawer;
 import it.traininground.badluck.util.MathUtil;
 import it.traininground.badluck.util.ShapeDrawerUtil;
 import space.earlygrey.shapedrawer.ShapeDrawer;
 
-public class IsoMapSimpleRenderer extends IsoMapRenderer {
+public class IsoMapRendererImpl extends IsoMapRenderer {
 
     private Map<TerrainType, TextureAtlas.AtlasRegion> terrainMap;
+
     private ShapeDrawer shapeDrawer;
+
+    private Set<TileDrawer> tileDrawerSet;
+
+    private MapRegionSelector mapRegionSelector;
 
     private boolean debugMode;
 
     private int visibleLayerLevel;
+
     private boolean highlightedTile;
     private int highlightedLayer = -1;
     private int highlightedRow = -1;
     private int highlightedColumn = -1;
 
+    private int lowerLayer;
+    private int upperLayer;
+    private int lowerTileX;
+    private int lowerTileY;
+    private int upperTileX;
+    private int upperTileY;
+
     private DebugShape debugShape;
 
-    public IsoMapSimpleRenderer(DefaultScene scene, TilesMap tilesMap, int cellWidth, int cellHeight, int layerHeight) {
+    public IsoMapRendererImpl(Scene scene, TilesMap tilesMap, int cellWidth, int cellHeight, int layerHeight) {
         super(scene, tilesMap, cellWidth, cellHeight, layerHeight);
         shapeDrawer = ShapeDrawerUtil.createShapeDrawer(scene.getGame().getBatch());
         this.visibleLayerLevel = tilesMap.getLayers() - 1;
 
         debugShape = new DebugShape(cellWidth, cellHeight, layerHeight);
+
+        mapRegionSelector = new MapRegionSelector(this);
 
         TextureAtlas terrain = new TextureAtlas("terrain/terrain.atlas");
         terrainMap = new HashMap<>();
@@ -52,6 +68,10 @@ public class IsoMapSimpleRenderer extends IsoMapRenderer {
         terrainMap.put(TerrainType.DOWN_SOUTH_EAST, terrain.findRegion("terrain_DSE"));
         terrainMap.put(TerrainType.DOWN_EAST, terrain.findRegion("terrain_DE"));
         terrainMap.put(TerrainType.DOWN_NORTH_EAST, terrain.findRegion("terrain_DNE"));
+
+        upperLayer = tilesMap.getLayers();
+        upperTileX = tilesMap.getColumns();
+        upperTileY = tilesMap.getColumns();
 
     }
 
@@ -116,6 +136,7 @@ public class IsoMapSimpleRenderer extends IsoMapRenderer {
             handleLayer(cameraPosition,layer, (row, column) -> drawnTiles.getAndIncrement());
         });
         InfoDrawer.put("drawn tiles", drawnTiles);
+        mapRegionSelector.updateRegion(cameraPosition);
     }
 
     private void handleMap(Vector3 cameraPosition, MapHandler mapHandler) {
@@ -136,6 +157,17 @@ public class IsoMapSimpleRenderer extends IsoMapRenderer {
                 layerHandler.handleLayer(r, c);
             }
         }
+    }
+
+    public void updateMapDrawingBounds() {
+        Vector3 cameraPosition = scene.getMainCamera().position;
+        lowerLayer = (int) Math.max(0, Math.ceil((cameraPosition.y - y - GameInfo.HEIGHT / 2f) / layerHeight));
+        upperLayer = (int) Math.min(visibleLayerLevel, Math.floor((cameraPosition.y - y + GameInfo.HEIGHT / 2f + cellHeight / 2f * (tilesMap.getRows() + tilesMap.getColumns())) / layerHeight + 1));
+        lowerTileX = (int) Math.max(0, (x - cameraPosition.x - GameInfo.WIDTH / 2f + (cellWidth / 2f * (tilesMap.getRows() - 1))) / (cellWidth / 2f));
+        upperTileX = (int) Math.min(tilesMap.getColumns(), (x - cameraPosition.x + GameInfo.WIDTH / 2f + (cellWidth / 2f * (tilesMap.getRows() + 1))) / (cellWidth / 2f));
+        lowerTileY = (int) Math.max(0, (y - cameraPosition.y - GameInfo.HEIGHT / 2f - (cellHeight / 2f)) / (layerHeight / 2f));
+        upperTileY = (int) Math.min(tilesMap.getColumns(), (y - cameraPosition.y + GameInfo.HEIGHT / 2f + cellHeight / 2f) / (layerHeight / 2f));
+
     }
 
     public int getVisibleLayerLevel() {
@@ -200,7 +232,7 @@ public class IsoMapSimpleRenderer extends IsoMapRenderer {
         @Override
         public void scrolled(int amount) {
             if (!Gdx.input.isKeyPressed(Input.Keys.CONTROL_LEFT)) {
-                IsoMapSimpleRenderer.this.setVisibleLayerLevel(Math.min(Math.max(0, IsoMapSimpleRenderer.this.getVisibleLayerLevel() - amount), IsoMapSimpleRenderer.this.getTilesMap().getLayers()-1));
+                IsoMapRendererImpl.this.setVisibleLayerLevel(Math.min(Math.max(0, IsoMapRendererImpl.this.getVisibleLayerLevel() - amount), IsoMapRendererImpl.this.getTilesMap().getLayers()-1));
             }
         }
 
@@ -228,46 +260,4 @@ public class IsoMapSimpleRenderer extends IsoMapRenderer {
         }
     };
 
-    class DebugShape {
-        Polygon[] cubePolygonList;
-        Color borderColor = Color.BLACK;
-        Color[] cubePolygonColorList = new Color[]{
-        new Color(0xbbbbbbff),
-        new Color(0x999999ff),
-        new Color(0x666666ff)
-        };
-        DebugShape (int tileWidth, int tileHeight, int layerHeight) {
-            float xUnit = tileWidth/2f;
-            float yUnit = tileHeight/2f;
-            cubePolygonList = new Polygon[]{
-                new Polygon(new float[]{0, 0, -xUnit, -yUnit, 0, -2*yUnit, xUnit, -yUnit}),
-                new Polygon(new float[]{-xUnit, -yUnit, -xUnit, -yUnit -layerHeight, 0, -2*yUnit - layerHeight, 0, -2*yUnit}),
-                new Polygon(new float[]{xUnit, -yUnit, xUnit, -yUnit -layerHeight, 0, -2*yUnit - layerHeight, 0, -2*yUnit})
-            };
-        }
-        void draw(ShapeDrawer drawer, float x, float y) {
-            shapeDrawer.setDefaultLineWidth(1);
-            float storedColor = drawer.getPackedColor();
-            drawer.setDefaultLineWidth(1);
-            for (int i = 0; i < 3; i++) {
-                drawer.setColor(cubePolygonColorList[i]);
-                cubePolygonList[i].setPosition(x, y);
-                drawer.filledPolygon(cubePolygonList[i]);
-            }
-            drawer.setColor(borderColor);
-            for (Polygon polygon : cubePolygonList) {
-                drawer.polygon(polygon);
-            }
-            drawer.setColor(storedColor);
-        }
-    }
 }
-
-interface MapHandler {
-    void handleMap(int layer);
-}
-
-interface LayerHandler {
-    void handleLayer(int row, int column);
-}
-

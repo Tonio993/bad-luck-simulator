@@ -4,7 +4,7 @@ import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 
-import it.traininground.badluck.scenes.DefaultScene;
+import it.traininground.badluck.scenes.Scene;
 import it.traininground.badluck.scenes.MainTestScene;
 
 public class GameMain extends Game {
@@ -28,7 +28,7 @@ public class GameMain extends Game {
 		return batch;
 	}
 
-	public void setScreen(DefaultScene screen) {
+	public void setScreen(Scene screen) {
 		super.setScreen(screen);
 		Gdx.input.setInputProcessor(screen.getInputManager());
 	}

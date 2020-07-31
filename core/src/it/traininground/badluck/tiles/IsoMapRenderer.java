@@ -1,10 +1,10 @@
 package it.traininground.badluck.tiles;
 
-import it.traininground.badluck.scenes.DefaultScene;
+import it.traininground.badluck.scenes.Scene;
 
 public abstract class IsoMapRenderer {
 
-    protected DefaultScene scene;
+    protected Scene scene;
     protected TilesMap tilesMap;
 
     protected int x;
@@ -13,7 +13,7 @@ public abstract class IsoMapRenderer {
     protected int cellHeight;
     protected int layerHeight;
 
-    public IsoMapRenderer(DefaultScene scene, TilesMap tilesMap, int cellWidth, int cellHeight, int layerHeight) {
+    public IsoMapRenderer(Scene scene, TilesMap tilesMap, int cellWidth, int cellHeight, int layerHeight) {
         this.scene = scene;
         this.cellWidth = cellWidth;
         this.cellHeight = cellHeight;
@@ -53,6 +53,14 @@ public abstract class IsoMapRenderer {
 
     public void setCellHeight(int cellHeight) {
         this.cellHeight = cellHeight;
+    }
+
+    public int getLayerHeight() {
+        return layerHeight;
+    }
+
+    public void setLayerHeight(int layerHeight) {
+        this.layerHeight = layerHeight;
     }
 
     public TilesMap getTilesMap() {
