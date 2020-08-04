@@ -49,7 +49,7 @@ public class MapRegionSelector {
         float offsetX = mapRenderer.getX() - cameraPosition.x;
         float offsetY = cameraPosition.y - mapRenderer.getY();
         lowerLayerIndex = (int) Math.max(0, (offsetY - screenSizeY) / mapRenderer.getLayerHeight() + 1);
-        upperLayerIndex = (int) Math.min(visibleLayerLevel, Math.ceil((offsetY + screenSizeY - gridSizeY + layerSize) / mapRenderer.getLayerHeight() + 1));
+        upperLayerIndex = (int) Math.min(visibleLayerLevel, Math.ceil((offsetY + screenSizeY + layerSize) / mapRenderer.getLayerHeight() + 1));
         lowerTileIndexX = (int) Math.max(0, (offsetX - screenSizeX + gridSizeX) / (mapRenderer.getCellWidth() / 2f) - 1);
         upperTileIndexX = (int) Math.min(mapRenderer.getTilesMap().getColumns(), Math.ceil((offsetX + screenSizeX) / (mapRenderer.getCellWidth() / 2f) + 1));
 
@@ -58,6 +58,8 @@ public class MapRegionSelector {
     }
 
     public void draw() {
+        InfoDrawer.put("lower layer", lowerLayerIndex);
+        InfoDrawer.put("upper layer", upperLayerIndex);
         for (int layer = lowerLayerIndex; layer < upperLayerIndex; layer++) {
             int layerPosition = layer * mapRenderer.getLayerHeight();
             int lowerTileIndexY = (int) Math.max(0, (lowerTileBoundY + layerPosition) / (mapRenderer.getCellHeight() / 2f));
