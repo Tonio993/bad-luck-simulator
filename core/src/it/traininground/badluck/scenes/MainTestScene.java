@@ -41,7 +41,7 @@ public class MainTestScene extends Scene {
             tilesMap.setTile(i, 0, 9, TerrainType.PLAIN);
         }
 
-        isoMapRenderer = new IsoMapRendererImpl(this, tilesMap, 64, 32, 64);
+        isoMapRenderer = new IsoMapRendererImpl(this, tilesMap, 64, 32, 32);
         isoMapRenderer.setX(GameInfo.WIDTH/2);
         isoMapRenderer.setY(GameInfo.HEIGHT/2);
         isoMapRenderer.setDebugMode(true);

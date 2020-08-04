@@ -13,6 +13,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 import it.traininground.badluck.input.InputHandler;
 import it.traininground.badluck.scenes.Scene;
 import it.traininground.badluck.tiles.debug.DebugShape;
+import it.traininground.badluck.util.InfoDrawer;
 import it.traininground.badluck.util.MathUtil;
 import it.traininground.badluck.util.ShapeDrawerUtil;
 import space.earlygrey.shapedrawer.ShapeDrawer;
@@ -94,9 +95,12 @@ public class IsoMapRendererImpl extends IsoMapRenderer {
         tileDrawerSet.add((layer, row, column) -> drawnTiles.getAndIncrement());
 
         tileDrawerSet.add((layer, row, column) -> {
+            shapeDrawer.setDefaultLineWidth(1);
+            shapeDrawer.setColor(Color.BLACK);
             shapeDrawer.line(x - 10, y, x + 10, y);
             shapeDrawer.line(x, y - 10, x, y + 10);
         });
+
     }
 
     private void selectHighlightedTile(int screenX, int screenY) {
@@ -125,7 +129,12 @@ public class IsoMapRendererImpl extends IsoMapRenderer {
     public void draw() {
         Vector3 cameraPosition = scene.getMainCamera().position;
         mapRegionSelector.updateRegion(cameraPosition);
+
+        drawnTiles.set(0);
+
         mapRegionSelector.draw();
+
+        InfoDrawer.put("drawn tiles", drawnTiles);
     }
 
     public int getVisibleLayerLevel() {
@@ -190,7 +199,7 @@ public class IsoMapRendererImpl extends IsoMapRenderer {
         @Override
         public void scrolled(int amount) {
             if (!Gdx.input.isKeyPressed(Input.Keys.CONTROL_LEFT)) {
-                mapRegionSelector.setVisibleLayerLevel(Math.min(Math.max(0, mapRegionSelector.getVisibleLayerLevel() - amount), IsoMapRendererImpl.this.getTilesMap().getLayers()));
+                mapRegionSelector.setVisibleLayerLevel(Math.min(Math.max(1, mapRegionSelector.getVisibleLayerLevel() - amount), IsoMapRendererImpl.this.getTilesMap().getLayers()));
             }
         }
 

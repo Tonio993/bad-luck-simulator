@@ -62,8 +62,6 @@ public class MapRegionSelector {
             int layerPosition = layer * mapRenderer.getLayerHeight();
             int lowerTileIndexY = (int) Math.max(0, (lowerTileBoundY + layerPosition) / (mapRenderer.getCellHeight() / 2f));
             int upperTileIndexY = (int) Math.max(0, (upperTileBoundY + layerPosition) / (mapRenderer.getCellHeight() / 2f));
-            InfoDrawer.put("lower tile y", lowerTileIndexY);
-            InfoDrawer.put("upper tile y", upperTileIndexY);
             for (TileDrawer tileDrawer : mapRenderer.getTileDrawerSet()) {
                 for (int r = 0; r < mapRenderer.getTilesMap().getRows(); r++) {
                     int lowerTile = MathUtil.max(0, lowerTileIndexX -(mapRenderer.getTilesMap().getRows() - r), lowerTileIndexY - r);
