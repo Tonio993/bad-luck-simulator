@@ -8,14 +8,11 @@ import com.badlogic.gdx.math.Vector3;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Set;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import it.traininground.badluck.input.InputHandler;
 import it.traininground.badluck.scenes.Scene;
 import it.traininground.badluck.tiles.debug.DebugShape;
-import it.traininground.badluck.util.GameInfo;
-import it.traininground.badluck.util.InfoDrawer;
 import it.traininground.badluck.util.MathUtil;
 import it.traininground.badluck.util.ShapeDrawerUtil;
 import space.earlygrey.shapedrawer.ShapeDrawer;
@@ -25,8 +22,6 @@ public class IsoMapRendererImpl extends IsoMapRenderer {
     private Map<TerrainType, TextureAtlas.AtlasRegion> terrainMap;
 
     private ShapeDrawer shapeDrawer;
-
-    private Set<TileDrawer> tileDrawerSet;
 
     private MapRegionSelector mapRegionSelector;
 
@@ -39,14 +34,9 @@ public class IsoMapRendererImpl extends IsoMapRenderer {
     private int highlightedRow = -1;
     private int highlightedColumn = -1;
 
-    private int lowerLayer;
-    private int upperLayer;
-    private int lowerTileX;
-    private int lowerTileY;
-    private int upperTileX;
-    private int upperTileY;
-
     private DebugShape debugShape;
+
+    AtomicInteger drawnTiles = new AtomicInteger();
 
     public IsoMapRendererImpl(Scene scene, TilesMap tilesMap, int cellWidth, int cellHeight, int layerHeight) {
         super(scene, tilesMap, cellWidth, cellHeight, layerHeight);
@@ -69,10 +59,44 @@ public class IsoMapRendererImpl extends IsoMapRenderer {
         terrainMap.put(TerrainType.DOWN_EAST, terrain.findRegion("terrain_DE"));
         terrainMap.put(TerrainType.DOWN_NORTH_EAST, terrain.findRegion("terrain_DNE"));
 
-        upperLayer = tilesMap.getLayers();
-        upperTileX = tilesMap.getColumns();
-        upperTileY = tilesMap.getColumns();
+        tileDrawerSet.add((layer, row, column) -> {
+            if (debugMode) return;
+            TerrainType terrainType = tilesMap.getTile(layer, row, column);
+            if (terrainType != TerrainType.EMPTY) {
+                float currentOffsetX = x + (row - column - 1) * cellWidth / 2f;
+                float currentOffsetY = y - (row + column + 2) * cellHeight / 2f + layerHeight * (layer - 1);
+                scene.getGame().getBatch().draw(terrainMap.get(terrainType), currentOffsetX, currentOffsetY);
+            }
+        });
 
+        tileDrawerSet.add((layer, row, column) -> {
+            if (!debugMode) return;
+            TerrainType terrainType = tilesMap.getTile(layer, row, column);
+            if (terrainType != TerrainType.EMPTY) {
+                float debugLineOffsetX = x + (row - column) * cellWidth / 2f;
+                float debugLineOffsetY = y - (row + column) * cellHeight / 2f + layer * layerHeight;
+                shapeDrawer.setDefaultLineWidth(1);
+                shapeDrawer.setColor(Color.BLACK);
+                debugShape.draw(shapeDrawer, debugLineOffsetX, debugLineOffsetY);
+            }
+        });
+
+        tileDrawerSet.add((layer, row, column) -> {
+            if (highlightedTile && highlightedLayer == layer) {
+                float offsetX = x + (highlightedRow - highlightedColumn) * (cellWidth/2f);
+                float offsetY = y - (highlightedRow + highlightedColumn) * (cellHeight/2f) + highlightedLayer * layerHeight;
+                shapeDrawer.setDefaultLineWidth(5);
+                shapeDrawer.setColor(Color.ORANGE);
+                shapeDrawer.polygon(new float[]{offsetX, offsetY, offsetX + cellWidth/2f, offsetY - cellHeight/2f, offsetX, offsetY - cellHeight, offsetX - cellWidth/2f, offsetY - cellHeight/2f});
+            }
+        });
+
+        tileDrawerSet.add((layer, row, column) -> drawnTiles.getAndIncrement());
+
+        tileDrawerSet.add((layer, row, column) -> {
+            shapeDrawer.line(x - 10, y, x + 10, y);
+            shapeDrawer.line(x, y - 10, x, y + 10);
+        });
     }
 
     private void selectHighlightedTile(int screenX, int screenY) {
@@ -99,75 +123,9 @@ public class IsoMapRendererImpl extends IsoMapRenderer {
 
     @Override
     public void draw() {
-        AtomicInteger drawnTiles = new AtomicInteger();
         Vector3 cameraPosition = scene.getMainCamera().position;
-        handleMap(cameraPosition, (layer) -> {
-            float currentLayerHeight = (layer - 1) * layerHeight;
-            if (!debugMode) {
-                handleLayer(cameraPosition, layer, (row, column) -> {
-                    TerrainType terrainType = tilesMap.getTile(layer, row, column);
-                    if (terrainType != TerrainType.EMPTY) {
-                        float currentOffsetX = x + (row - column - 1) * cellWidth / 2f;
-                        float currentOffsetY = y - (row + column + 2) * cellHeight / 2f + currentLayerHeight;
-                        scene.getGame().getBatch().draw(terrainMap.get(terrainType), currentOffsetX, currentOffsetY);
-                    }
-                });
-            } else {
-                handleLayer(cameraPosition, layer, (row, column) -> {
-                    TerrainType terrainType = tilesMap.getTile(layer, row, column);
-                    if (terrainType != TerrainType.EMPTY) {
-                        float debugLineOffsetX = x + (row - column) * cellWidth / 2f;
-                        float debugLineOffsetY = y - (row + column) * cellHeight / 2f + layer * layerHeight;
-                        shapeDrawer.setDefaultLineWidth(1);
-                        shapeDrawer.setColor(Color.BLACK);
-                        debugShape.draw(shapeDrawer, debugLineOffsetX, debugLineOffsetY);
-                    }
-                });
-            }
-            handleLayer(cameraPosition, layer, (row, column) -> {
-                if (highlightedTile && highlightedLayer == layer) {
-                    float offsetX = x + (highlightedRow - highlightedColumn) * (cellWidth/2f);
-                    float offsetY = y - (highlightedRow + highlightedColumn) * (cellHeight/2f) + highlightedLayer * layerHeight;
-                    shapeDrawer.setDefaultLineWidth(5);
-                    shapeDrawer.setColor(Color.ORANGE);
-                    shapeDrawer.polygon(new float[]{offsetX, offsetY, offsetX + cellWidth/2f, offsetY - cellHeight/2f, offsetX, offsetY - cellHeight, offsetX - cellWidth/2f, offsetY - cellHeight/2f});
-                }
-            });
-            handleLayer(cameraPosition,layer, (row, column) -> drawnTiles.getAndIncrement());
-        });
-        InfoDrawer.put("drawn tiles", drawnTiles);
         mapRegionSelector.updateRegion(cameraPosition);
-    }
-
-    private void handleMap(Vector3 cameraPosition, MapHandler mapHandler) {
-        int firstLayer = (int) Math.max(0, Math.ceil((cameraPosition.y - y - GameInfo.HEIGHT / 2f) / layerHeight));
-        int lastLayer = (int) Math.min(visibleLayerLevel, Math.floor((cameraPosition.y - y + GameInfo.HEIGHT / 2f + cellHeight / 2f * (tilesMap.getRows() + tilesMap.getColumns())) / layerHeight + 1));
-        for (int l = firstLayer; l <= lastLayer; l++) {
-            mapHandler.handleMap(l);
-        }
-    }
-
-    private void handleLayer(Vector3 cameraPosition, int layer, LayerHandler layerHandler) {
-        for (int r = 0; r < tilesMap.getRows(); r++) {
-            int firstCellX = (int) Math.max(0, -(tilesMap.getRows() - r - 1) + (x - cameraPosition.x - GameInfo.WIDTH / 2f + (cellWidth / 2f * (tilesMap.getRows() - 1))) / (cellWidth / 2f));
-            int lastCellX = (int) Math.min(tilesMap.getColumns(), -(tilesMap.getRows() - r - 1) + (x - cameraPosition.x + GameInfo.WIDTH / 2f + (cellWidth / 2f * (tilesMap.getRows() + 1))) / (cellWidth / 2f));
-            int firstCellY = (int) Math.max(0, -r + (y - cameraPosition.y - GameInfo.HEIGHT / 2f - (cellHeight / 2f) + (layer - 1) * layerHeight) / (layerHeight / 2f));
-            int lastCellY = (int) Math.min(tilesMap.getColumns(), -r + (y - cameraPosition.y + GameInfo.HEIGHT / 2f + layer * layerHeight + cellHeight / 2f) / (layerHeight / 2f));
-            for (int c = Math.max(firstCellX, firstCellY); c < Math.min(lastCellX, lastCellY); c++) {
-                layerHandler.handleLayer(r, c);
-            }
-        }
-    }
-
-    public void updateMapDrawingBounds() {
-        Vector3 cameraPosition = scene.getMainCamera().position;
-        lowerLayer = (int) Math.max(0, Math.ceil((cameraPosition.y - y - GameInfo.HEIGHT / 2f) / layerHeight));
-        upperLayer = (int) Math.min(visibleLayerLevel, Math.floor((cameraPosition.y - y + GameInfo.HEIGHT / 2f + cellHeight / 2f * (tilesMap.getRows() + tilesMap.getColumns())) / layerHeight + 1));
-        lowerTileX = (int) Math.max(0, (x - cameraPosition.x - GameInfo.WIDTH / 2f + (cellWidth / 2f * (tilesMap.getRows() - 1))) / (cellWidth / 2f));
-        upperTileX = (int) Math.min(tilesMap.getColumns(), (x - cameraPosition.x + GameInfo.WIDTH / 2f + (cellWidth / 2f * (tilesMap.getRows() + 1))) / (cellWidth / 2f));
-        lowerTileY = (int) Math.max(0, (y - cameraPosition.y - GameInfo.HEIGHT / 2f - (cellHeight / 2f)) / (layerHeight / 2f));
-        upperTileY = (int) Math.min(tilesMap.getColumns(), (y - cameraPosition.y + GameInfo.HEIGHT / 2f + cellHeight / 2f) / (layerHeight / 2f));
-
+        mapRegionSelector.draw();
     }
 
     public int getVisibleLayerLevel() {
@@ -232,7 +190,7 @@ public class IsoMapRendererImpl extends IsoMapRenderer {
         @Override
         public void scrolled(int amount) {
             if (!Gdx.input.isKeyPressed(Input.Keys.CONTROL_LEFT)) {
-                IsoMapRendererImpl.this.setVisibleLayerLevel(Math.min(Math.max(0, IsoMapRendererImpl.this.getVisibleLayerLevel() - amount), IsoMapRendererImpl.this.getTilesMap().getLayers()-1));
+                mapRegionSelector.setVisibleLayerLevel(Math.min(Math.max(0, mapRegionSelector.getVisibleLayerLevel() - amount), IsoMapRendererImpl.this.getTilesMap().getLayers()));
             }
         }
 

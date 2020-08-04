@@ -2,78 +2,85 @@ package it.traininground.badluck.tiles;
 
 import com.badlogic.gdx.math.Vector3;
 
-import java.util.Collections;
-import java.util.LinkedHashSet;
-import java.util.Set;
-
 import it.traininground.badluck.util.GameInfo;
 import it.traininground.badluck.util.InfoDrawer;
+import it.traininground.badluck.util.MathUtil;
 
 public class MapRegionSelector {
 
     private IsoMapRenderer mapRenderer;
 
-    private Set<TileDrawer> tileDrawerSet;
 
-    private int lowerLayer;
-    private int upperLayer;
-    private int lowerTileX;
-    private int lowerTileY;
-    private int upperTileX;
-    private int upperTileY;
+    private int lowerLayerIndex;
+    private int upperLayerIndex;
+    private int lowerTileIndexX;
+    private int upperTileIndexX;
+
+    private float lowerTileBoundY;
+    private float upperTileBoundY;
+
+    private float screenSizeX;
+    private float screenSizeY;
+    private float layerSize;
+    private float gridSizeX;
+    private float gridSizeY;
 
     private int visibleLayerLevel;
 
     public MapRegionSelector(IsoMapRenderer mapRenderer) {
         this.mapRenderer = mapRenderer;
-        this.upperLayer = mapRenderer.getTilesMap().getLayers();
-        this.upperTileX = mapRenderer.getTilesMap().getColumns();
-        this.upperTileY = mapRenderer.getTilesMap().getColumns();
+        this.upperLayerIndex = mapRenderer.getTilesMap().getLayers();
+        this.upperTileIndexX = mapRenderer.getTilesMap().getColumns();
+        this.upperTileBoundY = mapRenderer.getTilesMap().getColumns();
         this.visibleLayerLevel = mapRenderer.getTilesMap().getLayers();
 
-        this.tileDrawerSet = new LinkedHashSet<>();
+        this.screenSizeX = GameInfo.WIDTH / 2f;
+        this.screenSizeY = GameInfo.HEIGHT / 2f;
+
+        this.layerSize = mapRenderer.getLayerHeight() * mapRenderer.getTilesMap().getLayers();
+
+        int tilesFactor = mapRenderer.getTilesMap().getRows() + mapRenderer.getTilesMap().getColumns();
+        this.gridSizeX = (mapRenderer.getCellWidth() / 4f) * tilesFactor;
+        this.gridSizeY = (mapRenderer.getCellHeight() / 2f) * tilesFactor;
+        InfoDrawer.put("grid X", gridSizeX);
     }
 
     public void updateRegion(Vector3 cameraPosition) {
-        lowerLayer = (int) Math.max(0, Math.ceil((cameraPosition.y - mapRenderer.getY() - GameInfo.HEIGHT / 2f) / mapRenderer.layerHeight));
-        upperLayer = (int) Math.min(visibleLayerLevel, Math.floor((cameraPosition.y - mapRenderer.getY() + GameInfo.HEIGHT / 2f + mapRenderer.getCellHeight() / 2f * (mapRenderer.getTilesMap().getRows() + mapRenderer.getTilesMap().getColumns())) / mapRenderer.getLayerHeight() + 1));
-        lowerTileX = (int) Math.max(0, (mapRenderer.getX() - cameraPosition.x - GameInfo.WIDTH / 2f + (mapRenderer.getCellWidth() / 2f * (mapRenderer.getTilesMap().getRows() - 1))) / (mapRenderer.getCellWidth() / 2f));
-        upperTileX = (int) Math.min(mapRenderer.getTilesMap().getColumns(), (mapRenderer.getX() - cameraPosition.x + GameInfo.WIDTH / 2f + (mapRenderer.getCellWidth() / 2f * (mapRenderer.getTilesMap().getRows() + 1))) / (mapRenderer.getCellWidth() / 2f));
-        lowerTileY = (int) Math.max(0, (mapRenderer.getY() - cameraPosition.y - GameInfo.HEIGHT / 2f - (mapRenderer.getCellHeight() / 2f)) / (mapRenderer.getLayerHeight() / 2f));
-        upperTileY = (int) Math.min(mapRenderer.getTilesMap().getColumns(), (mapRenderer.getY() - cameraPosition.y + GameInfo.HEIGHT / 2f + mapRenderer.getCellHeight() / 2f) / (mapRenderer.getLayerHeight() / 2f));
+        float offsetX = mapRenderer.getX() - cameraPosition.x;
+        float offsetY = cameraPosition.y - mapRenderer.getY();
+        lowerLayerIndex = (int) Math.max(0, (offsetY - screenSizeY) / mapRenderer.getLayerHeight() + 1);
+        upperLayerIndex = (int) Math.min(visibleLayerLevel, Math.ceil((offsetY + screenSizeY - gridSizeY + layerSize) / mapRenderer.getLayerHeight() + 1));
+        lowerTileIndexX = (int) Math.max(0, (offsetX - screenSizeX + gridSizeX) / (mapRenderer.getCellWidth() / 2f) - 1);
+        upperTileIndexX = (int) Math.min(mapRenderer.getTilesMap().getColumns(), Math.ceil((offsetX + screenSizeX) / (mapRenderer.getCellWidth() / 2f) + 1));
 
-        InfoDrawer.put("lower layer", lowerLayer);
-        InfoDrawer.put("upper layer", upperLayer);
-        InfoDrawer.put("lower tile x", lowerTileX);
-        InfoDrawer.put("lower tile y", lowerTileY);
-        InfoDrawer.put("upper tile x", upperTileX);
-        InfoDrawer.put("upper tile y", upperTileY);
+        lowerTileBoundY = (int) (- offsetY - screenSizeY - mapRenderer.getLayerHeight() - (mapRenderer.getCellHeight() / 2f));
+        upperTileBoundY = (int) (- offsetY + screenSizeY + (mapRenderer.getCellHeight() / 2f));
     }
 
     public void draw() {
-        for (int l = lowerLayer; l <= upperLayer; l++) {
-            for (TileDrawer tileDrawer : tileDrawerSet) {
+        for (int layer = lowerLayerIndex; layer < upperLayerIndex; layer++) {
+            int layerPosition = layer * mapRenderer.getLayerHeight();
+            int lowerTileIndexY = (int) Math.max(0, (lowerTileBoundY + layerPosition) / (mapRenderer.getCellHeight() / 2f));
+            int upperTileIndexY = (int) Math.max(0, (upperTileBoundY + layerPosition) / (mapRenderer.getCellHeight() / 2f));
+            InfoDrawer.put("lower tile y", lowerTileIndexY);
+            InfoDrawer.put("upper tile y", upperTileIndexY);
+            for (TileDrawer tileDrawer : mapRenderer.getTileDrawerSet()) {
                 for (int r = 0; r < mapRenderer.getTilesMap().getRows(); r++) {
-                    int lowerTile = Math.max(lowerTileX -(mapRenderer.getTilesMap().getRows() - r - 1), lowerTileY -r);
-                    int upperTile = Math.min(upperTileX -(mapRenderer.getTilesMap().getRows() - r - 1), upperTileY -r);
+                    int lowerTile = MathUtil.max(0, lowerTileIndexX -(mapRenderer.getTilesMap().getRows() - r), lowerTileIndexY - r);
+                    int upperTile = MathUtil.min(mapRenderer.getTilesMap().getColumns(), upperTileIndexX + r, upperTileIndexY - r);
                     for (int c = lowerTile; c < upperTile; c++) {
-                        tileDrawer.draw(l, r, c);
+                        tileDrawer.draw(layer, r, c);
                     }
                 }
             }
         }
     }
 
-    public Set<TileDrawer> getLayerHandlerSet() {
-        return Collections.unmodifiableSet(tileDrawerSet);
+    public int getVisibleLayerLevel() {
+        return visibleLayerLevel;
     }
 
-    public void add(TileDrawer tileDrawer) {
-        tileDrawerSet.add(tileDrawer);
+    public void setVisibleLayerLevel(int visibleLayerLevel) {
+        this.visibleLayerLevel = visibleLayerLevel;
     }
-
-    public void remove(TileDrawer tileDrawer) {
-        tileDrawerSet.remove(tileDrawer);
-    }
-
 }

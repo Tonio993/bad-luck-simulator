@@ -25,7 +25,7 @@ public class MainTestScene extends Scene {
 
 //        dude = new Dude(GameInfo.WIDTH/2f, GameInfo.HEIGHT/2f);
 
-        TilesMap tilesMap = new TilesMapBuilder(10, 1000, 1000).setBaseLayer(-1).build();
+        TilesMap tilesMap = new TilesMapBuilder(10, 10, 10).setBaseLayer(-1).build();
 
         tilesMap.setTile(1, 3, 3, TerrainType.PLAIN);
         tilesMap.setTile(1, 3, 2, TerrainType.DOWN_NORTH);
@@ -41,10 +41,10 @@ public class MainTestScene extends Scene {
             tilesMap.setTile(i, 0, 9, TerrainType.PLAIN);
         }
 
-        isoMapRenderer = new IsoMapRendererImpl(this, tilesMap, 64, 32, 32);
+        isoMapRenderer = new IsoMapRendererImpl(this, tilesMap, 64, 32, 64);
         isoMapRenderer.setX(GameInfo.WIDTH/2);
         isoMapRenderer.setY(GameInfo.HEIGHT/2);
-//        isoMapRenderer.setDebugMode(true);
+        isoMapRenderer.setDebugMode(true);
 
         mouseEdgeCameraMoving = new CameraMovementHandler(mainCamera);
         inputManager.bind(mouseEdgeCameraMoving.inputHandler);

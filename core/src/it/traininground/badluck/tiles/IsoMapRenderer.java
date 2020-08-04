@@ -1,11 +1,16 @@
 package it.traininground.badluck.tiles;
 
+import java.util.Collections;
+import java.util.LinkedHashSet;
+import java.util.Set;
+
 import it.traininground.badluck.scenes.Scene;
 
 public abstract class IsoMapRenderer {
 
     protected Scene scene;
     protected TilesMap tilesMap;
+    protected Set<TileDrawer> tileDrawerSet;
 
     protected int x;
     protected int y;
@@ -19,6 +24,8 @@ public abstract class IsoMapRenderer {
         this.cellHeight = cellHeight;
         this.layerHeight = layerHeight;
         this.tilesMap = tilesMap;
+
+        tileDrawerSet = new LinkedHashSet<>();
     }
 
     public abstract void draw();
@@ -69,5 +76,17 @@ public abstract class IsoMapRenderer {
 
     public void setTilesMap(TilesMap tilesMap) {
         this.tilesMap = tilesMap;
+    }
+
+    public Set<TileDrawer> getTileDrawerSet() {
+        return Collections.unmodifiableSet(tileDrawerSet);
+    }
+
+    public void add(TileDrawer tileDrawer) {
+        tileDrawerSet.add(tileDrawer);
+    }
+
+    public void remove(TileDrawer tileDrawer) {
+        tileDrawerSet.remove(tileDrawer);
     }
 }
