@@ -44,7 +44,7 @@ public class MainTestScene extends Scene {
         isoMapRenderer = new IsoMapRendererImpl(this, tilesMap, 64, 32, 32);
         isoMapRenderer.setX(GameInfo.WIDTH/2);
         isoMapRenderer.setY(GameInfo.HEIGHT/2);
-        isoMapRenderer.setDebugMode(true);
+//        isoMapRenderer.setDebugMode(true);
 
         mouseEdgeCameraMoving = new CameraMovementHandler(mainCamera);
         inputManager.bind(mouseEdgeCameraMoving.inputHandler);

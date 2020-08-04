@@ -28,8 +28,6 @@ public class IsoMapRendererImpl extends IsoMapRenderer {
 
     private boolean debugMode;
 
-    private int visibleLayerLevel;
-
     private boolean highlightedTile;
     private int highlightedLayer = -1;
     private int highlightedRow = -1;
@@ -42,7 +40,6 @@ public class IsoMapRendererImpl extends IsoMapRenderer {
     public IsoMapRendererImpl(Scene scene, TilesMap tilesMap, int cellWidth, int cellHeight, int layerHeight) {
         super(scene, tilesMap, cellWidth, cellHeight, layerHeight);
         shapeDrawer = ShapeDrawerUtil.createShapeDrawer(scene.getGame().getBatch());
-        this.visibleLayerLevel = tilesMap.getLayers() - 1;
 
         debugShape = new DebugShape(cellWidth, cellHeight, layerHeight);
 
@@ -95,6 +92,7 @@ public class IsoMapRendererImpl extends IsoMapRenderer {
         tileDrawerSet.add((layer, row, column) -> drawnTiles.getAndIncrement());
 
         tileDrawerSet.add((layer, row, column) -> {
+            if (!debugMode) return;
             shapeDrawer.setDefaultLineWidth(1);
             shapeDrawer.setColor(Color.BLACK);
             shapeDrawer.line(x - 10, y, x + 10, y);
@@ -104,7 +102,7 @@ public class IsoMapRendererImpl extends IsoMapRenderer {
     }
 
     private void selectHighlightedTile(int screenX, int screenY) {
-        int currentLayer = getVisibleLayerLevel();
+        int currentLayer = mapRegionSelector.getVisibleLayerLevel();
         highlightedTile = false;
         while (currentLayer >= 0) {
             highlightedLayer = currentLayer;
@@ -135,15 +133,9 @@ public class IsoMapRendererImpl extends IsoMapRenderer {
         mapRegionSelector.draw();
 
         InfoDrawer.put("drawn tiles", drawnTiles);
-    }
-
-    public int getVisibleLayerLevel() {
-        return visibleLayerLevel;
-    }
-
-    public void setVisibleLayerLevel(int visibleLayerLevel) {
-        this.visibleLayerLevel = visibleLayerLevel;
-        selectHighlightedTile(Gdx.input.getX(), Gdx.input.getY());
+        InfoDrawer.put("selected layer", highlightedLayer);
+        InfoDrawer.put("selected row", highlightedRow);
+        InfoDrawer.put("selected column", highlightedColumn);
     }
 
     public boolean isDebugMode() {
@@ -199,7 +191,7 @@ public class IsoMapRendererImpl extends IsoMapRenderer {
         @Override
         public void scrolled(int amount) {
             if (!Gdx.input.isKeyPressed(Input.Keys.CONTROL_LEFT)) {
-                mapRegionSelector.setVisibleLayerLevel(Math.min(Math.max(1, mapRegionSelector.getVisibleLayerLevel() - amount), IsoMapRendererImpl.this.getTilesMap().getLayers()));
+                mapRegionSelector.setVisibleLayerLevel(Math.min(Math.max(0, mapRegionSelector.getVisibleLayerLevel() - amount), IsoMapRendererImpl.this.getTilesMap().getLayers() - 1));
             }
         }
 
@@ -217,7 +209,7 @@ public class IsoMapRendererImpl extends IsoMapRenderer {
                     default:
                         return;
                 }
-                tilesMap.setTile(highlightedLayer + 1, highlightedRow, highlightedColumn, terrain);
+                tilesMap.setTile(highlightedLayer, highlightedRow, highlightedColumn, terrain);
             }
         }
 

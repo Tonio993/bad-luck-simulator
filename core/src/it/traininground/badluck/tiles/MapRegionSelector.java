@@ -29,10 +29,10 @@ public class MapRegionSelector {
 
     public MapRegionSelector(IsoMapRenderer mapRenderer) {
         this.mapRenderer = mapRenderer;
-        this.upperLayerIndex = mapRenderer.getTilesMap().getLayers();
-        this.upperTileIndexX = mapRenderer.getTilesMap().getColumns();
-        this.upperTileBoundY = mapRenderer.getTilesMap().getColumns();
-        this.visibleLayerLevel = mapRenderer.getTilesMap().getLayers();
+        this.upperLayerIndex = mapRenderer.getTilesMap().getLayers() - 1;
+        this.upperTileIndexX = mapRenderer.getTilesMap().getColumns() - 1;
+        this.upperTileBoundY = mapRenderer.getTilesMap().getColumns() - 1;
+        this.visibleLayerLevel = mapRenderer.getTilesMap().getLayers() - 1;
 
         this.screenSizeX = GameInfo.WIDTH / 2f;
         this.screenSizeY = GameInfo.HEIGHT / 2f;
@@ -60,7 +60,7 @@ public class MapRegionSelector {
     public void draw() {
         InfoDrawer.put("lower layer", lowerLayerIndex);
         InfoDrawer.put("upper layer", upperLayerIndex);
-        for (int layer = lowerLayerIndex; layer < upperLayerIndex; layer++) {
+        for (int layer = lowerLayerIndex; layer <= upperLayerIndex; layer++) {
             int layerPosition = layer * mapRenderer.getLayerHeight();
             int lowerTileIndexY = (int) Math.max(0, (lowerTileBoundY + layerPosition) / (mapRenderer.getCellHeight() / 2f));
             int upperTileIndexY = (int) Math.max(0, (upperTileBoundY + layerPosition) / (mapRenderer.getCellHeight() / 2f));
