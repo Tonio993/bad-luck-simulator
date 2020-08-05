@@ -1,15 +1,14 @@
-package it.traininground.badluck.tiles;
+package it.traininground.badluck.tiles.mapregionfilter;
 
 import com.badlogic.gdx.math.Vector3;
 
+import it.traininground.badluck.tiles.IsoMapRenderer;
+import it.traininground.badluck.tiles.TileDrawer;
 import it.traininground.badluck.util.GameInfo;
 import it.traininground.badluck.util.InfoDrawer;
 import it.traininground.badluck.util.MathUtil;
 
-public class MapRegionSelector {
-
-    private IsoMapRenderer mapRenderer;
-
+public class MapRegionFilterImpl extends MapRegionFilter {
 
     private int lowerLayerIndex;
     private int upperLayerIndex;
@@ -21,23 +20,14 @@ public class MapRegionSelector {
 
     private float screenSizeX;
     private float screenSizeY;
-    private float layerSize;
     private float gridSizeX;
     private float gridSizeY;
 
-    private int visibleLayerLevel;
-
-    public MapRegionSelector(IsoMapRenderer mapRenderer) {
-        this.mapRenderer = mapRenderer;
-        this.upperLayerIndex = mapRenderer.getTilesMap().getLayers() - 1;
-        this.upperTileIndexX = mapRenderer.getTilesMap().getColumns() - 1;
-        this.upperTileBoundY = mapRenderer.getTilesMap().getColumns() - 1;
-        this.visibleLayerLevel = mapRenderer.getTilesMap().getLayers() - 1;
+    public MapRegionFilterImpl(IsoMapRenderer mapRenderer) {
+        super(mapRenderer);
 
         this.screenSizeX = GameInfo.WIDTH / 2f;
         this.screenSizeY = GameInfo.HEIGHT / 2f;
-
-        this.layerSize = mapRenderer.getLayerHeight() * mapRenderer.getTilesMap().getLayers();
 
         int tilesFactor = mapRenderer.getTilesMap().getRows() + mapRenderer.getTilesMap().getColumns();
         this.gridSizeX = (mapRenderer.getCellWidth() / 4f) * tilesFactor;
@@ -49,7 +39,7 @@ public class MapRegionSelector {
         float offsetX = mapRenderer.getX() - cameraPosition.x;
         float offsetY = cameraPosition.y - mapRenderer.getY();
         lowerLayerIndex = (int) Math.max(0, (offsetY - screenSizeY) / mapRenderer.getLayerHeight() + 1);
-        upperLayerIndex = (int) Math.min(visibleLayerLevel, Math.ceil((offsetY + screenSizeY + layerSize) / mapRenderer.getLayerHeight() + 1));
+        upperLayerIndex = (int) Math.min(visibleLayerLevel, Math.ceil((offsetY + screenSizeY + gridSizeY) / mapRenderer.getLayerHeight() + 1));
         lowerTileIndexX = (int) Math.max(0, (offsetX - screenSizeX + gridSizeX) / (mapRenderer.getCellWidth() / 2f) - 1);
         upperTileIndexX = (int) Math.min(mapRenderer.getTilesMap().getColumns(), Math.ceil((offsetX + screenSizeX) / (mapRenderer.getCellWidth() / 2f) + 1));
 
@@ -57,7 +47,7 @@ public class MapRegionSelector {
         upperTileBoundY = (int) (- offsetY + screenSizeY + (mapRenderer.getCellHeight() / 2f));
     }
 
-    public void draw() {
+    public void drawFilteredRegion() {
         InfoDrawer.put("lower layer", lowerLayerIndex);
         InfoDrawer.put("upper layer", upperLayerIndex);
         for (int layer = lowerLayerIndex; layer <= upperLayerIndex; layer++) {

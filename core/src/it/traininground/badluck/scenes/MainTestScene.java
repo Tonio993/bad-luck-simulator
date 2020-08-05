@@ -6,6 +6,7 @@ import com.badlogic.gdx.graphics.GL20;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -36,7 +37,7 @@ public class MainTestScene extends Scene {
         TilesMap tilesMap;
         if (!filehandle.exists()) {
             ObjectOutputStream oos = new ObjectOutputStream(new BufferedOutputStream(new FileOutputStream(filehandle.path())));
-            tilesMap = new TilesMapBuilder(10, 10, 10).setBaseLayer(0).build();
+            tilesMap = new TilesMapBuilder(10, 20, 20).setBaseLayer(0).build();
 
             tilesMap.setTile(1, 3, 3, TerrainType.PLAIN);
             tilesMap.setTile(1, 3, 2, TerrainType.DOWN_NORTH);
@@ -57,6 +58,7 @@ public class MainTestScene extends Scene {
         } else {
             ObjectInputStream ois = new ObjectInputStream(new BufferedInputStream(new FileInputStream(filehandle.path())));
             tilesMap = (TilesMap) ois.readObject();
+            ois.close();
         }
 
 
@@ -70,6 +72,9 @@ public class MainTestScene extends Scene {
 //        isoMapRenderer.setDebugMode(true);
 
         mouseEdgeCameraMoving = new CameraMovementHandler(mainCamera);
+        mouseEdgeCameraMoving.setMapRegionFilter(isoMapRenderer.mapRegionFilter);
+        isoMapRenderer.mapRegionFilter.updateRegion(mainCamera.position);
+
         inputManager.bind(mouseEdgeCameraMoving.inputHandler);
         inputManager.bind(isoMapRenderer.inputHandler);
         inputManager.bind(new GameCloseInput());
@@ -128,5 +133,21 @@ public class MainTestScene extends Scene {
     @Override
     public void dispose() {
 //        dude.dispose();
+        try {
+            File file = new File("map/map.igm");
+            if (file.exists()) {
+                File tmpFile = new File("map/map.igm.tmp");
+                tmpFile.createNewFile();
+                ObjectOutputStream oos = new ObjectOutputStream(new BufferedOutputStream(new FileOutputStream(tmpFile)));
+                oos.writeObject(isoMapRenderer.getTilesMap());
+                oos.close();
+                file.delete();
+                tmpFile.renameTo(file);
+                tmpFile.delete();
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
     }
 }

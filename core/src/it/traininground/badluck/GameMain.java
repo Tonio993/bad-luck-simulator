@@ -12,6 +12,8 @@ import it.traininground.badluck.scenes.MainTestScene;
 public class GameMain extends Game {
 	SpriteBatch batch;
 
+	boolean closeApplication;
+
 	@Override
 	public void create () {
 		this.batch = new SpriteBatch();
@@ -25,6 +27,12 @@ public class GameMain extends Game {
 	@Override
 	public void render () {
 		super.render();
+		if (closeApplication) {
+			this.getScreen().dispose();
+			this.dispose();
+			Gdx.app.exit();
+			System.exit(0);
+		}
 	}
 	
 	@Override
@@ -37,5 +45,9 @@ public class GameMain extends Game {
 	public void setScreen(Scene screen) {
 		super.setScreen(screen);
 		Gdx.input.setInputProcessor(screen.getInputManager());
+	}
+
+	public void closeApplication() {
+		closeApplication = true;
 	}
 }

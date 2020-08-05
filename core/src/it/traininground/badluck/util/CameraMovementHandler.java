@@ -6,10 +6,12 @@ import com.badlogic.gdx.graphics.Camera;
 import com.badlogic.gdx.math.Vector3;
 
 import it.traininground.badluck.input.InputHandler;
+import it.traininground.badluck.tiles.mapregionfilter.MapRegionFilter;
 
 public class CameraMovementHandler {
 
     private final Camera camera;
+    private MapRegionFilter mapRegionFilter;
 
     private int edgeThreshold = 80;
     private int edgeHorizontalMovement = 0;
@@ -69,9 +71,19 @@ public class CameraMovementHandler {
             if (horizontalMovement != 0 || verticalMovement != 0) {
                 float offset = cameraSpeed * delta * (camera.viewportWidth / GameInfo.WIDTH);
                 camera.position.add(horizontalMovement * offset, verticalMovement * offset, 0);
-
+                if (mapRegionFilter != null) {
+                    mapRegionFilter.updateRegion(camera.position);
+                }
             }
         }
+    }
+
+    public MapRegionFilter getMapRegionFilter() {
+        return mapRegionFilter;
+    }
+
+    public void setMapRegionFilter(MapRegionFilter mapRegionFilter) {
+        this.mapRegionFilter = mapRegionFilter;
     }
 
     public final InputHandler inputHandler = new InputHandler() {
@@ -107,6 +119,9 @@ public class CameraMovementHandler {
             Vector3 touchPoint = camera.unproject(new Vector3(screenX, screenY, 0));
             if (isCameraDragged) {
                 camera.position.set(cameraDraggedStart.sub(touchPoint.sub(cameraDraggedTouch)));
+                if (mapRegionFilter != null) {
+                    mapRegionFilter.updateRegion(camera.position);
+                }
             }
         }
 

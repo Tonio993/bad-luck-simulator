@@ -3,6 +3,7 @@ package it.traininground.badluck.input.handlers;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 
+import it.traininground.badluck.GameMain;
 import it.traininground.badluck.input.InputHandler;
 
 public class GameCloseInput extends InputHandler {
@@ -14,8 +15,7 @@ public class GameCloseInput extends InputHandler {
     @Override
     public void keyDown(int keycode) {
         if (keycode == Input.Keys.ESCAPE) {
-            Gdx.app.exit();
-            System.exit(0);
+            ((GameMain) Gdx.app.getApplicationListener()).closeApplication();
         }
     }
 }

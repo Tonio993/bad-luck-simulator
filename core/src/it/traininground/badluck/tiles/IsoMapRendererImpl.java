@@ -13,6 +13,8 @@ import java.util.concurrent.atomic.AtomicInteger;
 import it.traininground.badluck.input.InputHandler;
 import it.traininground.badluck.scenes.Scene;
 import it.traininground.badluck.tiles.debug.DebugShape;
+import it.traininground.badluck.tiles.mapregionfilter.MapRegionFilter;
+import it.traininground.badluck.tiles.mapregionfilter.MapRegionFilterImpl;
 import it.traininground.badluck.util.InfoDrawer;
 import it.traininground.badluck.util.MathUtil;
 import it.traininground.badluck.util.ShapeDrawerUtil;
@@ -24,7 +26,7 @@ public class IsoMapRendererImpl extends IsoMapRenderer {
 
     private ShapeDrawer shapeDrawer;
 
-    private MapRegionSelector mapRegionSelector;
+    public final MapRegionFilter mapRegionFilter;
 
     private boolean debugMode;
 
@@ -43,7 +45,7 @@ public class IsoMapRendererImpl extends IsoMapRenderer {
 
         debugShape = new DebugShape(cellWidth, cellHeight, layerHeight);
 
-        mapRegionSelector = new MapRegionSelector(this);
+        mapRegionFilter = new MapRegionFilterImpl(this);
 
         TextureAtlas terrain = new TextureAtlas("terrain/terrain.atlas");
         terrainMap = new HashMap<>();
@@ -89,7 +91,11 @@ public class IsoMapRendererImpl extends IsoMapRenderer {
             }
         });
 
-        tileDrawerSet.add((layer, row, column) -> drawnTiles.getAndIncrement());
+        tileDrawerSet.add((layer, row, column) -> {
+            if (tilesMap.getTile(layer, row, column) != TerrainType.EMPTY) {
+                drawnTiles.getAndIncrement();
+            }
+        });
 
         tileDrawerSet.add((layer, row, column) -> {
             if (!debugMode) return;
@@ -102,7 +108,7 @@ public class IsoMapRendererImpl extends IsoMapRenderer {
     }
 
     private void selectHighlightedTile(int screenX, int screenY) {
-        int currentLayer = mapRegionSelector.getVisibleLayerLevel();
+        int currentLayer = mapRegionFilter.getVisibleLayerLevel();
         highlightedTile = false;
         while (currentLayer >= 0) {
             highlightedLayer = currentLayer;
@@ -125,12 +131,9 @@ public class IsoMapRendererImpl extends IsoMapRenderer {
 
     @Override
     public void draw() {
-        Vector3 cameraPosition = scene.getMainCamera().position;
-        mapRegionSelector.updateRegion(cameraPosition);
-
         drawnTiles.set(0);
 
-        mapRegionSelector.draw();
+        mapRegionFilter.drawFilteredRegion();
 
         InfoDrawer.put("drawn tiles", drawnTiles);
         InfoDrawer.put("selected layer", highlightedLayer);
@@ -191,14 +194,14 @@ public class IsoMapRendererImpl extends IsoMapRenderer {
         @Override
         public void scrolled(int amount) {
             if (!Gdx.input.isKeyPressed(Input.Keys.CONTROL_LEFT)) {
-                mapRegionSelector.setVisibleLayerLevel(Math.min(Math.max(0, mapRegionSelector.getVisibleLayerLevel() - amount), IsoMapRendererImpl.this.getTilesMap().getLayers() - 1));
+                mapRegionFilter.setVisibleLayerLevel(Math.min(Math.max(0, mapRegionFilter.getVisibleLayerLevel() - amount), IsoMapRendererImpl.this.getTilesMap().getLayers() - 1));
+                mapRegionFilter.updateRegion(scene.getMainCamera().position);
             }
         }
 
         @Override
         public void touchDown(int screenX, int screenY, int pointer, int button) {
             if (isHighlightedTile()) {
-                TerrainType terrain;
                 switch (button) {
                     case Input.Buttons.LEFT:
                         tilesMap.setTile(highlightedLayer + 1, highlightedRow, highlightedColumn, TerrainType.PLAIN);
