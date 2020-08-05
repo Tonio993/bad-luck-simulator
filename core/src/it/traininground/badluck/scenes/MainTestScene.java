@@ -1,7 +1,16 @@
 package it.traininground.badluck.scenes;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.graphics.GL20;
+
+import java.io.BufferedInputStream;
+import java.io.BufferedOutputStream;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 
 import it.traininground.badluck.GameMain;
 import it.traininground.badluck.input.handlers.GameCloseInput;
@@ -20,26 +29,40 @@ public class MainTestScene extends Scene {
 
     private CameraMovementHandler mouseEdgeCameraMoving;
 
-    public MainTestScene(GameMain game) {
+    public MainTestScene(GameMain game) throws IOException, ClassNotFoundException {
         super(game);
+
+        FileHandle filehandle = Gdx.files.local("map/map.igm");
+        TilesMap tilesMap;
+        if (!filehandle.exists()) {
+            ObjectOutputStream oos = new ObjectOutputStream(new BufferedOutputStream(new FileOutputStream(filehandle.path())));
+            tilesMap = new TilesMapBuilder(10, 10, 10).setBaseLayer(0).build();
+
+            tilesMap.setTile(1, 3, 3, TerrainType.PLAIN);
+            tilesMap.setTile(1, 3, 2, TerrainType.DOWN_NORTH);
+            tilesMap.setTile(1, 2, 2, TerrainType.DOWN_NORTH_WEST);
+            tilesMap.setTile(1, 2, 3, TerrainType.DOWN_WEST);
+            tilesMap.setTile(1, 2, 4, TerrainType.DOWN_SOUTH_WEST);
+            tilesMap.setTile(1, 3, 4, TerrainType.DOWN_SOUTH);
+            tilesMap.setTile(1, 4, 4, TerrainType.DOWN_SOUTH_EAST);
+            tilesMap.setTile(1, 4, 3, TerrainType.DOWN_EAST);
+            tilesMap.setTile(1, 4, 2, TerrainType.DOWN_NORTH_EAST);
+
+            for (int i=1; i<10; i++) {
+                tilesMap.setTile(i, 0, 9, TerrainType.PLAIN);
+            }
+
+            oos.writeObject(tilesMap);
+            oos.close();
+        } else {
+            ObjectInputStream ois = new ObjectInputStream(new BufferedInputStream(new FileInputStream(filehandle.path())));
+            tilesMap = (TilesMap) ois.readObject();
+        }
+
 
 //        dude = new Dude(GameInfo.WIDTH/2f, GameInfo.HEIGHT/2f);
 
-        TilesMap tilesMap = new TilesMapBuilder(10, 10, 10).setBaseLayer(-1).build();
 
-        tilesMap.setTile(1, 3, 3, TerrainType.PLAIN);
-        tilesMap.setTile(1, 3, 2, TerrainType.DOWN_NORTH);
-        tilesMap.setTile(1, 2, 2, TerrainType.DOWN_NORTH_WEST);
-        tilesMap.setTile(1, 2, 3, TerrainType.DOWN_WEST);
-        tilesMap.setTile(1, 2, 4, TerrainType.DOWN_SOUTH_WEST);
-        tilesMap.setTile(1, 3, 4, TerrainType.DOWN_SOUTH);
-        tilesMap.setTile(1, 4, 4, TerrainType.DOWN_SOUTH_EAST);
-        tilesMap.setTile(1, 4, 3, TerrainType.DOWN_EAST);
-        tilesMap.setTile(1, 4, 2, TerrainType.DOWN_NORTH_EAST);
-
-        for (int i=1; i<10; i++) {
-            tilesMap.setTile(i, 0, 9, TerrainType.PLAIN);
-        }
 
         isoMapRenderer = new IsoMapRendererImpl(this, tilesMap, 64, 32, 32);
         isoMapRenderer.setX(GameInfo.WIDTH/2);

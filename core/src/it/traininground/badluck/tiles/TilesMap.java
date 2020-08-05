@@ -2,14 +2,21 @@ package it.traininground.badluck.tiles;
 
 import com.badlogic.gdx.utils.Array;
 
-public class TilesMap {
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.io.Serializable;
+import java.util.Arrays;
+import java.util.List;
+
+public class TilesMap implements Serializable {
 
     private static final TerrainType DEFAULT_TILE = TerrainType.PLAIN;
 
-    private final Array<Array<Array<TerrainType>>> mapMatrix;
-    private final int layers;
-    private final int rows;
-    private final int columns;
+    private Array<Array<Array<TerrainType>>> mapMatrix;
+    private int layers;
+    private int rows;
+    private int columns;
 
     TilesMap(TilesMapBuilder builder) {
         this.layers = builder.getLayers();
@@ -31,6 +38,7 @@ public class TilesMap {
             }
             mapMatrix.add(mapLayer);
         }
+
     }
 
     public TilesMap(int layers, int rows, int columns) {
@@ -73,5 +81,39 @@ public class TilesMap {
 
     public int getColumns() {
         return columns;
+    }
+
+    private void writeObject(ObjectOutputStream stream) throws IOException {
+        stream.writeInt(layers);
+        stream.writeInt(rows);
+        stream.writeInt(columns);
+        List<TerrainType> terrainTypes = Arrays.asList(TerrainType.values());
+        for (Array<Array<TerrainType>> layer : mapMatrix) {
+            for (Array<TerrainType> row : layer) {
+                for (TerrainType tile : row) {
+                    stream.writeInt(terrainTypes.indexOf(tile));
+                }
+            }
+        }
+    }
+
+    private void readObject(ObjectInputStream stream) throws IOException {
+        layers = stream.readInt();
+        rows = stream.readInt();
+        columns = stream.readInt();
+        mapMatrix = new Array<>(layers);
+        mapMatrix = new Array<>(layers);
+        List<TerrainType> terrainTypes = Arrays.asList(TerrainType.values());
+        for (int l = 0; l < layers; l++) {
+            Array<Array<TerrainType>> mapLayer = new Array<>(rows);
+            for (int r = 0; r < rows; r++) {
+                Array<TerrainType> mapRow = new Array<>(columns);
+                for (int c = 0; c < columns; c++) {
+                    mapRow.add(terrainTypes.get(stream.readInt()));
+                }
+                mapLayer.add(mapRow);
+            }
+            mapMatrix.add(mapLayer);
+        }
     }
 }

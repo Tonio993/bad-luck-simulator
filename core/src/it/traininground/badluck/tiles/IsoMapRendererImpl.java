@@ -201,15 +201,12 @@ public class IsoMapRendererImpl extends IsoMapRenderer {
                 TerrainType terrain;
                 switch (button) {
                     case Input.Buttons.LEFT:
-                        terrain = TerrainType.PLAIN;
+                        tilesMap.setTile(highlightedLayer + 1, highlightedRow, highlightedColumn, TerrainType.PLAIN);
                         break;
                     case Input.Buttons.RIGHT:
-                        terrain = TerrainType.EMPTY;
+                        tilesMap.setTile(highlightedLayer, highlightedRow, highlightedColumn, TerrainType.EMPTY);
                         break;
-                    default:
-                        return;
                 }
-                tilesMap.setTile(highlightedLayer, highlightedRow, highlightedColumn, terrain);
             }
         }
 

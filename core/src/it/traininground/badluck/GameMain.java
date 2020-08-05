@@ -4,6 +4,8 @@ import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 
+import java.io.IOException;
+
 import it.traininground.badluck.scenes.Scene;
 import it.traininground.badluck.scenes.MainTestScene;
 
@@ -13,7 +15,11 @@ public class GameMain extends Game {
 	@Override
 	public void create () {
 		this.batch = new SpriteBatch();
-		setScreen(new MainTestScene(this));
+		try {
+			setScreen(new MainTestScene(this));
+		} catch (IOException | ClassNotFoundException e) {
+			e.printStackTrace();
+		}
 	}
 
 	@Override
