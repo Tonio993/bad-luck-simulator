@@ -1,24 +1,28 @@
 package it.traininground.badluck;
 
-import com.badlogic.gdx.Game;
-import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-
 import java.io.IOException;
 
+import com.badlogic.gdx.Game;
+import com.badlogic.gdx.Gdx;
+
+import it.traininground.badluck.scenes.GameplayScene;
 import it.traininground.badluck.scenes.Scene;
-import it.traininground.badluck.scenes.MainTestScene;
+import it.traininground.badluck.util.GameBatch;
+import it.traininground.badluck.util.ShapeDrawerUtil;
+import space.earlygrey.shapedrawer.ShapeDrawer;
 
 public class GameMain extends Game {
-	SpriteBatch batch;
+	private GameBatch batch;
+	private ShapeDrawer shape;
 
 	boolean closeApplication;
 
 	@Override
 	public void create () {
-		this.batch = new SpriteBatch();
+		this.batch = new GameBatch();
+		shape = ShapeDrawerUtil.createShapeDrawer(batch);
 		try {
-			setScreen(new MainTestScene(this));
+			setScreen(new GameplayScene(this));
 		} catch (IOException | ClassNotFoundException e) {
 			e.printStackTrace();
 		}
@@ -38,13 +42,17 @@ public class GameMain extends Game {
 	@Override
 	public void dispose () {}
 
-	public SpriteBatch getBatch() {
+	public GameBatch getBatch() {
 		return batch;
+	}
+
+	public ShapeDrawer getShape() {
+		return shape;
 	}
 
 	public void setScreen(Scene screen) {
 		super.setScreen(screen);
-		Gdx.input.setInputProcessor(screen.getInputManager());
+		Gdx.input.setInputProcessor(screen.getInput());
 	}
 
 	public void closeApplication() {

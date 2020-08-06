@@ -4,6 +4,8 @@ import java.util.Arrays;
 import java.util.HashSet;
 
 public class InputHandler {
+	
+	protected InputManager input;
 
     public enum EventType {
         KEY_DOWN,
@@ -18,7 +20,8 @@ public class InputHandler {
 
     protected HashSet<EventType> enabledEvents;
 
-    public InputHandler(EventType ...enabledEvents) {
+    public InputHandler(InputManager input, EventType ...enabledEvents) {
+    	this.input = input;
         if (enabledEvents == null || enabledEvents.length == 0) {
             this.enabledEvents = new HashSet<>(Arrays.asList(EventType.values()));
         } else {

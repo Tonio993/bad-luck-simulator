@@ -14,9 +14,9 @@ public class TilesMap implements Serializable {
     private static final TerrainType DEFAULT_TILE = TerrainType.PLAIN;
 
     private Array<Array<Array<TerrainType>>> mapMatrix;
-    private int layers;
-    private int rows;
-    private int columns;
+    protected int layers;
+    protected int rows;
+    protected int columns;
 
     TilesMap(TilesMapBuilder builder) {
         this.layers = builder.getLayers();
@@ -63,24 +63,12 @@ public class TilesMap implements Serializable {
         }
     }
 
-    public TerrainType getTile(int layer, int row, int column) {
+    public TerrainType tile(int layer, int row, int column) {
         return mapMatrix.get(layer).get(row).get(column);
     }
 
-    public void setTile(int layer, int row, int column, TerrainType terrainType) {
+    public void tile(int layer, int row, int column, TerrainType terrainType) {
         mapMatrix.get(layer).get(row).set(column, terrainType);
-    }
-
-    public int getLayers() {
-        return layers;
-    }
-
-    public int getRows() {
-        return rows;
-    }
-
-    public int getColumns() {
-        return columns;
     }
 
     private void writeObject(ObjectOutputStream stream) throws IOException {
@@ -116,4 +104,28 @@ public class TilesMap implements Serializable {
             mapMatrix.add(mapLayer);
         }
     }
+
+	public int getLayers() {
+		return layers;
+	}
+
+	public void setLayers(int layers) {
+		this.layers = layers;
+	}
+
+	public int getRows() {
+		return rows;
+	}
+
+	public void setRows(int rows) {
+		this.rows = rows;
+	}
+
+	public int getColumns() {
+		return columns;
+	}
+
+	public void setColumns(int columns) {
+		this.columns = columns;
+	}
 }

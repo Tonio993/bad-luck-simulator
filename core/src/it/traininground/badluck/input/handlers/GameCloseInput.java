@@ -5,11 +5,12 @@ import com.badlogic.gdx.Input;
 
 import it.traininground.badluck.GameMain;
 import it.traininground.badluck.input.InputHandler;
+import it.traininground.badluck.input.InputManager;
 
 public class GameCloseInput extends InputHandler {
 
-    public GameCloseInput() {
-        super(EventType.KEY_DOWN);
+    public GameCloseInput(InputManager input) {
+        super(input, EventType.KEY_DOWN);
     }
 
     @Override

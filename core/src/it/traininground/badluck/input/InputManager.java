@@ -1,14 +1,20 @@
 package it.traininground.badluck.input;
 
-import com.badlogic.gdx.InputProcessor;
-
 import java.util.HashMap;
 import java.util.HashSet;
 
+import com.badlogic.gdx.InputProcessor;
+
+import it.traininground.badluck.scenes.Scene;
+
 public class InputManager implements InputProcessor {
+	
+	protected Scene scene;
+	
     HashMap<InputHandler.EventType, HashSet<InputHandler>> inputEventMap;
 
-    public InputManager() {
+    public InputManager(Scene scene) {
+    	this.scene = scene;
         inputEventMap = new HashMap<>();
         for (InputHandler.EventType eventType : InputHandler.EventType.values()) {
             inputEventMap.put(eventType, new HashSet<InputHandler>());
@@ -91,4 +97,12 @@ public class InputManager implements InputProcessor {
         }
         return false;
     }
+
+	public Scene getScene() {
+		return scene;
+	}
+
+	public void setScene(Scene scene) {
+		this.scene = scene;
+	}
 }

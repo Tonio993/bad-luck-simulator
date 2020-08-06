@@ -1,58 +1,45 @@
 package it.traininground.badluck.scenes;
 
 import com.badlogic.gdx.Screen;
-import com.badlogic.gdx.graphics.OrthographicCamera;
-import com.badlogic.gdx.utils.viewport.StretchViewport;
-import com.badlogic.gdx.utils.viewport.Viewport;
 
 import it.traininground.badluck.GameMain;
+import it.traininground.badluck.camera.CameraManager;
 import it.traininground.badluck.input.InputManager;
-import it.traininground.badluck.util.GameInfo;
 
 public abstract class Scene implements Screen {
 
     protected GameMain game;
-    protected OrthographicCamera mainCamera;
-    protected Viewport gameViewport;
-    protected InputManager inputManager;
+    protected CameraManager camera;
+    protected InputManager input;
 
     public Scene(GameMain game) {
         this.game = game;
-        mainCamera = new OrthographicCamera(GameInfo.WIDTH, GameInfo.HEIGHT);
-        mainCamera.position.set(GameInfo.WIDTH/2f, GameInfo.HEIGHT/2f, 0);
-        gameViewport = new StretchViewport(GameInfo.WIDTH, GameInfo.HEIGHT);
-        inputManager = new InputManager();
+        camera = new CameraManager(this);
+        input = new InputManager(this);
     }
 
-    public GameMain getGame() {
-        return game;
-    }
+	public GameMain getGame() {
+		return game;
+	}
 
-    public void setGame(GameMain game) {
-        this.game = game;
-    }
+	public void setGame(GameMain game) {
+		this.game = game;
+	}
 
-    public OrthographicCamera getMainCamera() {
-        return mainCamera;
-    }
+	public CameraManager getCamera() {
+		return camera;
+	}
 
-    public void setMainCamera(OrthographicCamera mainCamera) {
-        this.mainCamera = mainCamera;
-    }
+	public void setCamera(CameraManager camera) {
+		this.camera = camera;
+	}
 
-    public Viewport getGameViewport() {
-        return gameViewport;
-    }
+	public InputManager getInput() {
+		return input;
+	}
 
-    public void setGameViewport(Viewport gameViewport) {
-        this.gameViewport = gameViewport;
-    }
+	public void setInput(InputManager input) {
+		this.input = input;
+	}
 
-    public InputManager getInputManager() {
-        return inputManager;
-    }
-
-    public void setInputManager(InputManager inputManager) {
-        this.inputManager = inputManager;
-    }
 }

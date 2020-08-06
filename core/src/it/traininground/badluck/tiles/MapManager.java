@@ -2,37 +2,53 @@ package it.traininground.badluck.tiles;
 
 import com.badlogic.gdx.graphics.g2d.Batch;
 
-import it.traininground.badluck.tiles.mapregionfilter.MapRegionFilter;
+import it.traininground.badluck.scenes.Scene;
 
 public class MapManager {
 	
-	private TilesMap map;
-	private TilesMapRenderer renderer;
-	private MapRegionFilter regionFilter;
+	protected final Scene scene;
+	protected final TilesMap tiles;
+	protected final TilesMapRenderer renderer;
+	protected final MapRegionFilter region;
+	
+	protected boolean debugMode;
+	
+	public MapManager(Scene scene, TilesMap map, TilesMapRenderer renderer, MapRegionFilter regionFilter) {
+		this.scene = scene;
+		this.tiles = map;
+		this.renderer = renderer;
+		this.region = regionFilter;
+		
+		region.visibleLayer = tiles.layers - 1;
+		region.updateRegion(this);
+	}
 
 	public void draw(Batch batch) {
-		
+		this.region.drawFilteredRegion(this);
 	}
-	
-	public TilesMap getMap() {
-		return map;
+
+	public Scene getScene() {
+		return scene;
 	}
-	public void setMap(TilesMap map) {
-		this.map = map;
+
+	public TilesMap getTiles() {
+		return tiles;
 	}
+
 	public TilesMapRenderer getRenderer() {
 		return renderer;
 	}
-	public void setRenderer(TilesMapRenderer renderer) {
-		this.renderer = renderer;
+
+	public MapRegionFilter getRegion() {
+		return region;
 	}
-	public MapRegionFilter getRegionFilter() {
-		return regionFilter;
+
+	public boolean isDebugMode() {
+		return debugMode;
 	}
-	public void setRegionFilter(MapRegionFilter regionFilter) {
-		this.regionFilter = regionFilter;
+
+	public void setDebugMode(boolean debugMode) {
+		this.debugMode = debugMode;
 	}
-	
-	
 
 }
