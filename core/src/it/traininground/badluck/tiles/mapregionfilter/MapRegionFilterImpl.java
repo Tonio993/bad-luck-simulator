@@ -2,7 +2,7 @@ package it.traininground.badluck.tiles.mapregionfilter;
 
 import com.badlogic.gdx.math.Vector3;
 
-import it.traininground.badluck.tiles.IsoMapRenderer;
+import it.traininground.badluck.tiles.TilesMapRenderer;
 import it.traininground.badluck.tiles.TileDrawer;
 import it.traininground.badluck.util.GameInfo;
 import it.traininground.badluck.util.InfoDrawer;
@@ -23,7 +23,7 @@ public class MapRegionFilterImpl extends MapRegionFilter {
     private float gridSizeX;
     private float gridSizeY;
 
-    public MapRegionFilterImpl(IsoMapRenderer mapRenderer) {
+    public MapRegionFilterImpl(TilesMapRenderer mapRenderer) {
         super(mapRenderer);
 
         this.screenSizeX = GameInfo.WIDTH / 2f;

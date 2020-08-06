@@ -8,11 +8,11 @@ import java.util.Map;
 
 import it.traininground.badluck.scenes.Scene;
 
-public class IsoMapSingleImageRenderer extends IsoMapRenderer {
+public class TilesMapSingleImageRenderer extends TilesMapRenderer {
 
     private Texture textureResult;
 
-    public IsoMapSingleImageRenderer(Scene scene, TilesMap tilesMap, int cellWidth, int cellHeight, int layerHeight) {
+    public TilesMapSingleImageRenderer(Scene scene, TilesMap tilesMap, int cellWidth, int cellHeight, int layerHeight) {
         super(scene, tilesMap, cellWidth, cellHeight, layerHeight);
 
         Map<TerrainType, Texture> terrainMap = new HashMap<>();

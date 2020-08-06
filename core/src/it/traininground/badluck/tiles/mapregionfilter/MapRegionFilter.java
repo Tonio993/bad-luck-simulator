@@ -2,14 +2,14 @@ package it.traininground.badluck.tiles.mapregionfilter;
 
 import com.badlogic.gdx.math.Vector3;
 
-import it.traininground.badluck.tiles.IsoMapRenderer;
+import it.traininground.badluck.tiles.TilesMapRenderer;
 
 public abstract class MapRegionFilter {
 
-    protected IsoMapRenderer mapRenderer;
+    protected TilesMapRenderer mapRenderer;
     protected int visibleLayerLevel;
 
-    public MapRegionFilter(IsoMapRenderer mapRenderer) {
+    public MapRegionFilter(TilesMapRenderer mapRenderer) {
         this.mapRenderer = mapRenderer;
         this.visibleLayerLevel = mapRenderer.getTilesMap().getLayers() - 1;
     }

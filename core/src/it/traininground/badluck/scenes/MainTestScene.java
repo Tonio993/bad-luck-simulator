@@ -15,7 +15,7 @@ import java.io.ObjectOutputStream;
 
 import it.traininground.badluck.GameMain;
 import it.traininground.badluck.input.handlers.GameCloseInput;
-import it.traininground.badluck.tiles.IsoMapRendererImpl;
+import it.traininground.badluck.tiles.TilesMapRendererImpl;
 import it.traininground.badluck.tiles.TerrainType;
 import it.traininground.badluck.tiles.TilesMap;
 import it.traininground.badluck.tiles.TilesMapBuilder;
@@ -26,7 +26,7 @@ import it.traininground.badluck.util.InfoDrawer;
 public class MainTestScene extends Scene {
 
 //    private Dude dude;
-    IsoMapRendererImpl isoMapRenderer;
+    TilesMapRendererImpl isoMapRenderer;
 
     private CameraMovementHandler mouseEdgeCameraMoving;
 
@@ -66,7 +66,7 @@ public class MainTestScene extends Scene {
 
 
 
-        isoMapRenderer = new IsoMapRendererImpl(this, tilesMap, 64, 32, 32);
+        isoMapRenderer = new TilesMapRendererImpl(this, tilesMap, 64, 32, 32);
         isoMapRenderer.setX(GameInfo.WIDTH/2);
         isoMapRenderer.setY(GameInfo.HEIGHT/2);
 //        isoMapRenderer.setDebugMode(true);

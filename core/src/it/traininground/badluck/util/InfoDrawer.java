@@ -29,7 +29,7 @@ public class InfoDrawer {
         FreeTypeFontGenerator.FreeTypeFontParameter parameter = new FreeTypeFontGenerator.FreeTypeFontParameter();
         parameter.size = 12;
         BitmapFont font = generator.generateFont(parameter);
-        style = new Label.LabelStyle(font, Color.DARK_GRAY);
+        style = new Label.LabelStyle(font, Color.BLACK);
     }
 
     private InfoDrawer() {}

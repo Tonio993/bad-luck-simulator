@@ -20,7 +20,7 @@ import it.traininground.badluck.util.MathUtil;
 import it.traininground.badluck.util.ShapeDrawerUtil;
 import space.earlygrey.shapedrawer.ShapeDrawer;
 
-public class IsoMapRendererImpl extends IsoMapRenderer {
+public class TilesMapRendererImpl extends TilesMapRenderer {
 
     private Map<TerrainType, TextureAtlas.AtlasRegion> terrainMap;
 
@@ -39,7 +39,7 @@ public class IsoMapRendererImpl extends IsoMapRenderer {
 
     AtomicInteger drawnTiles = new AtomicInteger();
 
-    public IsoMapRendererImpl(Scene scene, TilesMap tilesMap, int cellWidth, int cellHeight, int layerHeight) {
+    public TilesMapRendererImpl(Scene scene, TilesMap tilesMap, int cellWidth, int cellHeight, int layerHeight) {
         super(scene, tilesMap, cellWidth, cellHeight, layerHeight);
         shapeDrawer = ShapeDrawerUtil.createShapeDrawer(scene.getGame().getBatch());
 
@@ -194,7 +194,7 @@ public class IsoMapRendererImpl extends IsoMapRenderer {
         @Override
         public void scrolled(int amount) {
             if (!Gdx.input.isKeyPressed(Input.Keys.CONTROL_LEFT)) {
-                mapRegionFilter.setVisibleLayerLevel(Math.min(Math.max(0, mapRegionFilter.getVisibleLayerLevel() - amount), IsoMapRendererImpl.this.getTilesMap().getLayers() - 1));
+                mapRegionFilter.setVisibleLayerLevel(Math.min(Math.max(0, mapRegionFilter.getVisibleLayerLevel() - amount), TilesMapRendererImpl.this.getTilesMap().getLayers() - 1));
                 mapRegionFilter.updateRegion(scene.getMainCamera().position);
             }
         }

@@ -6,7 +6,7 @@ import java.util.Set;
 
 import it.traininground.badluck.scenes.Scene;
 
-public abstract class IsoMapRenderer {
+public abstract class TilesMapRenderer {
 
     protected Scene scene;
     protected TilesMap tilesMap;
@@ -18,7 +18,7 @@ public abstract class IsoMapRenderer {
     protected int cellHeight;
     protected int layerHeight;
 
-    public IsoMapRenderer(Scene scene, TilesMap tilesMap, int cellWidth, int cellHeight, int layerHeight) {
+    public TilesMapRenderer(Scene scene, TilesMap tilesMap, int cellWidth, int cellHeight, int layerHeight) {
         this.scene = scene;
         this.cellWidth = cellWidth;
         this.cellHeight = cellHeight;
