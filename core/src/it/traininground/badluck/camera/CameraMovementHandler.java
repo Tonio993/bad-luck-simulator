@@ -2,6 +2,7 @@ package it.traininground.badluck.camera;
 
 import com.badlogic.gdx.Input;
 
+import it.traininground.badluck.scenes.GameplayScene;
 import it.traininground.badluck.util.GameInfo;
 
 public class CameraMovementHandler {
@@ -64,6 +65,7 @@ public class CameraMovementHandler {
             if (horizontalMovement != 0 || verticalMovement != 0) {
                 float offset = cameraSpeed * delta * (camera.getMain().viewportWidth / GameInfo.WIDTH);
                 camera.getMain().position.add(horizontalMovement * offset, verticalMovement * offset, 0);
+                ((GameplayScene) camera.scene).getMap().getRegion().updateRegion(((GameplayScene) camera.scene).getMap());
             }
             
         }

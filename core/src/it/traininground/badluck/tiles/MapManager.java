@@ -10,14 +10,16 @@ public class MapManager {
 	protected final TilesMap tiles;
 	protected final TilesMapRenderer renderer;
 	protected final MapRegionFilter region;
+	protected final MapSelection selection;
 	
 	protected boolean debugMode;
 	
-	public MapManager(Scene scene, TilesMap map, TilesMapRenderer renderer, MapRegionFilter regionFilter) {
+	public MapManager(Scene scene, TilesMap map, TilesMapRenderer renderer, MapRegionFilter regionFilter, MapSelection selection) {
 		this.scene = scene;
 		this.tiles = map;
 		this.renderer = renderer;
 		this.region = regionFilter;
+		this.selection = selection;
 		
 		region.visibleLayer = tiles.layers - 1;
 		region.updateRegion(this);

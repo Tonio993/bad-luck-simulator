@@ -7,7 +7,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 
-import it.traininground.badluck.tiles.debug.DebugShape;
+import it.traininground.badluck.tiles.debug.CubeShape;
 import it.traininground.badluck.util.GameBatch;
 import space.earlygrey.shapedrawer.ShapeDrawer;
 
@@ -20,14 +20,14 @@ public class TilesMapRendererImpl extends TilesMapRenderer {
 //    private int highlightedRow = -1;
 //    private int highlightedColumn = -1;
 
-    private DebugShape debugShape;
+    private CubeShape debugShape;
 
     AtomicInteger drawnTiles = new AtomicInteger();
 
     public TilesMapRendererImpl(int cellWidth, int cellHeight, int layerHeight) {
         super(cellWidth, cellHeight, layerHeight);
 
-        debugShape = new DebugShape(cellWidth, cellHeight, layerHeight);
+        debugShape = new CubeShape(cellWidth, cellHeight, layerHeight);
 
         TextureAtlas terrain = new TextureAtlas("terrain/terrain.atlas");
         terrainMap = new HashMap<>();
@@ -65,15 +65,17 @@ public class TilesMapRendererImpl extends TilesMapRenderer {
             }
         });
 
-//        tileDrawerSet.add((map, layer, row, column) -> {
-//            if (highlightedTile && highlightedLayer == layer) {
-//                float offsetX = x + (highlightedRow - highlightedColumn) * (cellWidth/2f);
-//                float offsetY = y - (highlightedRow + highlightedColumn) * (cellHeight/2f) + highlightedLayer * layerHeight;
-//                shapeDrawer.setDefaultLineWidth(5);
-//                shapeDrawer.setColor(Color.ORANGE);
-//                shapeDrawer.polygon(new float[]{offsetX, offsetY, offsetX + cellWidth/2f, offsetY - cellHeight/2f, offsetX, offsetY - cellHeight, offsetX - cellWidth/2f, offsetY - cellHeight/2f});
-//            }
-//        });
+        tileDrawerSet.add((map, layer, row, column) -> {
+        	if (map.selection.isActive(layer, row, column)) {
+        		float offsetX = x + (row - column) * (cellWidth/2f);
+        		float offsetY = y - (row + column) * (cellHeight/2f) + layer * layerHeight;
+        		ShapeDrawer shapeDrawer = map.scene.getGame().getBatch().getShapeDrawer();
+        		shapeDrawer.setDefaultLineWidth(5);
+        		shapeDrawer.setColor(Color.ORANGE);
+//        		shapeDrawer.polygon(new float[]{offsetX, offsetY, offsetX + cellWidth/2f, offsetY - cellHeight/2f, offsetX, offsetY - cellHeight, offsetX - cellWidth/2f, offsetY - cellHeight/2f});
+        		debugShape.draw(shapeDrawer, offsetX, offsetY);        		
+            }
+        });
 
         tileDrawerSet.add((map, layer, row, column) -> {
             if (map.tiles.tile(layer, row, column) != TerrainType.EMPTY) {

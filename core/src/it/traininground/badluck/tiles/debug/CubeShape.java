@@ -5,7 +5,7 @@ import com.badlogic.gdx.math.Polygon;
 
 import space.earlygrey.shapedrawer.ShapeDrawer;
 
-public class DebugShape {
+public class CubeShape {
 
     Polygon[] cubePolygonList;
     Color borderColor = Color.BLACK;
@@ -15,7 +15,7 @@ public class DebugShape {
             new Color(0x666666ff)
     };
 
-    public DebugShape (int tileWidth, int tileHeight, int layerHeight) {
+    public CubeShape (int tileWidth, int tileHeight, int layerHeight) {
         float xUnit = tileWidth/2f;
         float yUnit = tileHeight/2f;
         cubePolygonList = new Polygon[]{

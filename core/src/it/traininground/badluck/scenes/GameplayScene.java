@@ -12,6 +12,8 @@ import it.traininground.badluck.input.handlers.UpdateRegionInput;
 import it.traininground.badluck.tiles.MapManager;
 import it.traininground.badluck.tiles.MapRegionFilter;
 import it.traininground.badluck.tiles.MapRegionFilterImpl;
+import it.traininground.badluck.tiles.MapSelection;
+import it.traininground.badluck.tiles.MapSelectionHandler;
 import it.traininground.badluck.tiles.TerrainType;
 import it.traininground.badluck.tiles.TilesMap;
 import it.traininground.badluck.tiles.TilesMapBuilder;
@@ -61,13 +63,15 @@ public class GameplayScene extends Scene {
         renderer.setY(GameInfo.HEIGHT/2);
         
         MapRegionFilter region = new MapRegionFilterImpl();
+        MapSelection selection = new MapSelection();
         
-        map = new MapManager(this, tiles, renderer, region);
+        map = new MapManager(this, tiles, renderer, region, selection);
 //        map.setDebugMode(true);
 
         input.bind(new CameraMoveInput(input));
         input.bind(new UpdateRegionInput(input));
         input.bind(new GameCloseInput(input));
+        input.bind(new MapSelectionHandler(input));
 
     }
 

@@ -1,15 +1,12 @@
 package it.traininground.badluck.tiles;
 
 import it.traininground.badluck.util.GameInfo;
-import it.traininground.badluck.util.InfoDrawer;
 import it.traininground.badluck.util.MathUtil;
 
 public class MapRegionFilterImpl extends MapRegionFilter {
 
-    private int lowerLayerIndex;
-    private int upperLayerIndex;
-    private int lowerTileIndexX;
-    private int upperTileIndexX;
+    private int lowerTileX;
+    private int upperTileX;
 
     private float lowerTileBoundY;
     private float upperTileBoundY;
@@ -31,27 +28,25 @@ public class MapRegionFilterImpl extends MapRegionFilter {
         float offsetX = map.renderer.x - map.scene.getCamera().getMain().position.x;
         float offsetY = map.scene.getCamera().getMain().position.y - map.renderer.y;
         
-        lowerLayerIndex = (int) Math.max(0, (offsetY - screenSizeY) / map.renderer.layerHeight + 1);
-        upperLayerIndex = (int) Math.min(visibleLayer, Math.ceil((offsetY + screenSizeY + gridSizeY) / map.renderer.layerHeight + 1));
-        lowerTileIndexX = (int) Math.max(0, (offsetX - screenSizeX + gridSizeX) / (map.renderer.cellWidth / 2f));
-        upperTileIndexX = (int) Math.min(map.tiles.columns, Math.ceil((offsetX + screenSizeX) / (map.renderer.cellWidth / 2f) + 1));
+        lowerLayer = (int) Math.max(0, (offsetY - screenSizeY) / map.renderer.layerHeight + 1);
+        upperLayer = (int) Math.min(visibleLayer, Math.ceil((offsetY + screenSizeY + gridSizeY) / map.renderer.layerHeight + 1));
+        lowerTileX = (int) Math.max(0, (offsetX - screenSizeX + gridSizeX) / (map.renderer.cellWidth / 2f));
+        upperTileX = (int) Math.min(map.tiles.columns, Math.ceil((offsetX + screenSizeX) / (map.renderer.cellWidth / 2f) + 1));
 
         lowerTileBoundY = (int) (- offsetY - screenSizeY - map.renderer.layerHeight - (map.renderer.cellHeight / 2f));
         upperTileBoundY = (int) (- offsetY + screenSizeY + (map.renderer.cellHeight / 2f));
     }
 
     public void drawFilteredRegion(MapManager map) {
-        InfoDrawer.put("lower layer", lowerLayerIndex);
-        InfoDrawer.put("upper layer", upperLayerIndex);
-        for (int layer = lowerLayerIndex; layer <= upperLayerIndex; layer++) {
+        for (int layer = lowerLayer; layer <= upperLayer; layer++) {
             int layerPosition = layer * map.renderer.layerHeight;
-            int lowerTileIndexY = (int) Math.max(0, (lowerTileBoundY + layerPosition) / (map.renderer.cellHeight / 2f));
-            int upperTileIndexY = (int) Math.max(0, (upperTileBoundY + layerPosition) / (map.renderer.cellHeight / 2f));
-            for (TileDrawer tileDrawer : map.renderer.getTileDrawerSet()) {
-                for (int r = 0; r < map.tiles.rows; r++) {
-                    int lowerTile = MathUtil.max(0, lowerTileIndexX -(map.tiles.rows - r), lowerTileIndexY - r);
-                    int upperTile = MathUtil.min(map.tiles.columns, upperTileIndexX + r, upperTileIndexY - r);
-                    for (int c = lowerTile; c < upperTile; c++) {
+            int lowerTileY = (int) Math.max(0, (lowerTileBoundY + layerPosition) / (map.renderer.cellHeight / 2f));
+            int upperTileY = (int) Math.max(0, (upperTileBoundY + layerPosition) / (map.renderer.cellHeight / 2f));
+            for (int r = 0; r < map.tiles.rows; r++) {
+            	int lowerTile = MathUtil.max(0, lowerTileX -(map.tiles.rows - r), lowerTileY - r);
+            	int upperTile = MathUtil.min(map.tiles.columns, upperTileX + r, upperTileY - r);
+            	for (int c = lowerTile; c < upperTile; c++) {
+            		for (TileDrawer tileDrawer : map.renderer.getTileDrawerSet()) {
                         tileDrawer.draw(map, layer, r, c);
                     }
                 }
