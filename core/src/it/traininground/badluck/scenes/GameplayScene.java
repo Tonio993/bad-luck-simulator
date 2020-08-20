@@ -46,8 +46,11 @@ public class GameplayScene extends Scene {
 		tiles.tile(1, 4, 3, TileType.DOWN_EAST);
 		tiles.tile(1, 4, 2, TileType.DOWN_NORTH_EAST);
 
-		for (int i = 1; i < 10; i++) {
-			tiles.tile(i, 0, 9, TileType.PLAIN);
+		for (int i = 1; i < 20; i++) {
+			tiles.tile(i, i, 9, TileType.PLAIN);
+		}
+		for (int i = 20; i < 40; i++) {
+			tiles.tile(i - 1, 39 - i, 10, TileType.PLAIN);
 		}
 
         TilesMapRendererImpl renderer = new TilesMapRendererImpl(64, 32, 32);
@@ -58,7 +61,7 @@ public class GameplayScene extends Scene {
         MapSelection selection = new MapSelection();
         
         map = new MapManager(this, tiles, renderer, region, selection);
-//        map.setDebugMode(true);
+        map.setDebugMode(true);
 
         input.bind(new CameraMoveInput(input));
         input.bind(new UpdateRegionInput(input));
@@ -69,7 +72,7 @@ public class GameplayScene extends Scene {
         input.bind(new DudeInput(input, dude));
         
         TilePathFindAStar pathfind = new TilePathFindAStar(tiles);
-        System.out.println(pathfind.findPath(new Tile(1, 0, 0), new Tile(999, 19, 19)));
+        System.out.println(pathfind.findPath(new Tile(1, 0, 0), new Tile(39, 0, 10)));
 
     }
 
