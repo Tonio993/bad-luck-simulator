@@ -2,16 +2,16 @@ package it.traininground.badluck.tiles;
 
 public class TilesMapBuilder {
 
-    private static final TerrainType DEFAULT_GROUND_TILE = TerrainType.PLAIN;
-    private static final TerrainType DEFAULT_EMPTY_TILE = TerrainType.EMPTY;
+    private static final TileType DEFAULT_GROUND_TILE = TileType.PLAIN;
+    private static final TileType DEFAULT_EMPTY_TILE = TileType.EMPTY;
 
     private int layers;
     private int rows;
     private int columns;
     private int baseLayer;
 
-    private TerrainType defaultGroundTile;
-    private TerrainType defaultEmptyTile;
+    private TileType defaultGroundTile;
+    private TileType defaultEmptyTile;
 
     public TilesMapBuilder(int layers, int rows, int columns) {
         this.defaultGroundTile = DEFAULT_GROUND_TILE;
@@ -58,20 +58,20 @@ public class TilesMapBuilder {
         return this;
     }
 
-    public TerrainType getDefaultGroundTile() {
+    public TileType getDefaultGroundTile() {
         return defaultGroundTile;
     }
 
-    public TilesMapBuilder setDefaultGroundTile(TerrainType defaultGroundTile) {
+    public TilesMapBuilder setDefaultGroundTile(TileType defaultGroundTile) {
         this.defaultGroundTile = defaultGroundTile;
         return this;
     }
 
-    public TerrainType getDefaultEmptyTile() {
+    public TileType getDefaultEmptyTile() {
         return defaultEmptyTile;
     }
 
-    public TilesMapBuilder setDefaultEmptyTile(TerrainType defaultEmptyTile) {
+    public TilesMapBuilder setDefaultEmptyTile(TileType defaultEmptyTile) {
         this.defaultEmptyTile = defaultEmptyTile;
         return this;
     }

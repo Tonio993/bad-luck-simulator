@@ -76,10 +76,10 @@ public class Dude implements Disposable {
         }
         batch.draw(
                 dudeFrame,
-                x - dudeFrame.getRegionWidth() / 2f,
-                y - dudeFrame.getRegionHeight() / 2f,
-                dudeFrame.getRegionWidth() / 1f,
-                dudeFrame.getRegionHeight() / 1f);
+                x - dudeFrame.getRegionWidth() / 10f,
+                y - dudeFrame.getRegionHeight() / 10f + 50,
+                dudeFrame.getRegionWidth() / 5f,
+                dudeFrame.getRegionHeight() / 5f);
     }
 
     private void switchAnimation(Animation<TextureAtlas.AtlasRegion> animation) {

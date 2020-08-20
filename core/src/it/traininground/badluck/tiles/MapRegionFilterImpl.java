@@ -42,14 +42,14 @@ public class MapRegionFilterImpl extends MapRegionFilter {
             int layerPosition = layer * map.renderer.layerHeight;
             int lowerTileY = (int) Math.max(0, (lowerTileBoundY + layerPosition) / (map.renderer.cellHeight / 2f));
             int upperTileY = (int) Math.max(0, (upperTileBoundY + layerPosition) / (map.renderer.cellHeight / 2f));
-            for (int r = 0; r < map.tiles.rows; r++) {
-            	int lowerTile = MathUtil.max(0, lowerTileX -(map.tiles.rows - r), lowerTileY - r);
-            	int upperTile = MathUtil.min(map.tiles.columns, upperTileX + r, upperTileY - r);
-            	for (int c = lowerTile; c < upperTile; c++) {
-            		for (TileDrawer tileDrawer : map.renderer.getTileDrawerSet()) {
-                        tileDrawer.draw(map, layer, r, c);
-                    }
-                }
+            for (TileDrawer tileDrawer : map.renderer.getTileDrawerSet()) {
+            	for (int r = 0; r < map.tiles.rows; r++) {
+            		int lowerTile = MathUtil.max(0, lowerTileX -(map.tiles.rows - r), lowerTileY - r);
+            		int upperTile = MathUtil.min(map.tiles.columns, upperTileX + r, upperTileY - r);
+            		for (int c = lowerTile; c < upperTile; c++) {
+            			tileDrawer.draw(map, layer, r, c);
+            		}
+            	}
             }
         }
     }

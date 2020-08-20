@@ -27,6 +27,7 @@ allprojects {
         ashleyVersion = '1.7.0'
         aiVersion = '1.8.0'
         shapedrawerVersion = '2.3.0'
+        jgraphtVersion = '1.5.0'
     }
 
     repositories {
@@ -82,6 +83,7 @@ project(":android") {
         natives "com.badlogicgames.gdx:gdx-freetype-platform:$gdxVersion:natives-x86"
         natives "com.badlogicgames.gdx:gdx-freetype-platform:$gdxVersion:natives-x86_64"
         api "com.badlogicgames.gdx:gdx-ai:$aiVersion"
+        
     }
 }
 project(":core") {
@@ -94,6 +96,7 @@ project(":core") {
         api "com.badlogicgames.gdx:gdx-ai:$aiVersion"
         api "com.badlogicgames.gdx:gdx-tools:$gdxVersion"
         implementation "space.earlygrey:shapedrawer:$shapedrawerVersion"
+		api "org.jgrapht:jgrapht-core:$jgraphtVersion"
     }
 
 }

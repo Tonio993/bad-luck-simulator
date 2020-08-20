@@ -15,7 +15,7 @@ public class CameraMovementHandler {
     private int keyHorizontalMovement = 0;
     private int keyVerticalMovement = 0;
 
-    private boolean enabled;
+    private boolean enabled = true;
 
     private int cameraSpeed = 800;
 

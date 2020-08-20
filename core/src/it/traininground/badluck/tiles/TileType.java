@@ -1,6 +1,6 @@
 package it.traininground.badluck.tiles;
 
-public enum TerrainType {
+public enum TileType {
     EMPTY,
     PLAIN,
     DOWN_NORTH,

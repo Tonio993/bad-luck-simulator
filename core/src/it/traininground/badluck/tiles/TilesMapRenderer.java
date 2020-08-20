@@ -49,5 +49,29 @@ public abstract class TilesMapRenderer {
 	public void setY(int y) {
 		this.y = y;
 	}
-    
+
+	public int getCellWidth() {
+		return cellWidth;
+	}
+
+	public void setCellWidth(int cellWidth) {
+		this.cellWidth = cellWidth;
+	}
+
+	public int getCellHeight() {
+		return cellHeight;
+	}
+
+	public void setCellHeight(int cellHeight) {
+		this.cellHeight = cellHeight;
+	}
+
+	public int getLayerHeight() {
+		return layerHeight;
+	}
+
+	public void setLayerHeight(int layerHeight) {
+		this.layerHeight = layerHeight;
+	}
+	
 }
