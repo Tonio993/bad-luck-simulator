@@ -24,7 +24,6 @@ import it.traininground.badluck.tiles.TilesMapRendererImpl;
 import it.traininground.badluck.util.GameInfo;
 import it.traininground.badluck.util.InfoDrawer;
 import it.traininground.badluck.util.pathfind.TilePathFindAStar;
-import it.traininground.badluck.util.pathfind.TilePathFindUtil;
 
 public class GameplayScene extends Scene {
 
