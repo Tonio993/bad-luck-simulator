@@ -1,7 +1,8 @@
 package it.traininground.badluck.input.handlers;
 
+import java.util.List;
+
 import com.badlogic.gdx.Input.Buttons;
-import com.badlogic.gdx.math.Vector2;
 
 import it.traininground.badluck.actor.Dude;
 import it.traininground.badluck.input.InputHandler;
@@ -9,7 +10,9 @@ import it.traininground.badluck.input.InputManager;
 import it.traininground.badluck.scenes.GameplayScene;
 import it.traininground.badluck.tiles.MapManager;
 import it.traininground.badluck.tiles.MapSelection;
+import it.traininground.badluck.tiles.Tile;
 import it.traininground.badluck.tiles.TilesMapRenderer;
+import it.traininground.badluck.util.pathfind.TilePathFindAStar;
 
 public class DudeInput extends InputHandler {
 
@@ -33,9 +36,11 @@ public class DudeInput extends InputHandler {
 	@Override
 	public void touchDown(int screenX, int screenY, int pointer, int button) {
 		if (button == Buttons.LEFT && selection.isHover()) {
-			Vector2 position = map.getTilePosition(selection.getHover());
-			dude.setNextX(position.x);
-			dude.setNextY(position.y);
+			List<Tile> path = new TilePathFindAStar(map.getTiles()).findPath(dude.getTile(), selection.getHover().add(1, 0, 0));
+			if (path != null) {
+				path.remove(0);
+			}
+			dude.setPath(path);
 		}
 	}
 }

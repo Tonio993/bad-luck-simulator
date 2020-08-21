@@ -50,6 +50,14 @@ public class Tile {
 	public void unset() {
 		this.layer = this.row = this.column = -1;
 	}
+	
+	public Tile add(Tile tile) {
+		return new Tile(this.layer + tile.layer, this.row + tile.row, this.column + tile.column);
+	}
+	
+	public Tile add(int layer, int row, int column) {
+		return new Tile(this.layer + layer, this.row + row, this.column + column);
+	}
 
 	@Override
 	public String toString() {

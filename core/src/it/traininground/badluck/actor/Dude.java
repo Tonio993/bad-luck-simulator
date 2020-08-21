@@ -3,11 +3,12 @@ package it.traininground.badluck.actor;
 import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
-import com.badlogic.gdx.math.MathUtils;
-import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.Disposable;
 
-public class Dude implements Disposable {
+import it.traininground.badluck.tiles.MapManager;
+import it.traininground.badluck.tiles.Tile;
+
+public class Dude extends IsoActor implements Disposable {
 
     private final TextureAtlas idleDude;
     private final Animation<TextureAtlas.AtlasRegion> idleDudeAnimation;
@@ -17,26 +18,23 @@ public class Dude implements Disposable {
 
     private Animation<TextureAtlas.AtlasRegion> currentDudeAnimation;
 
-    private float x;
-    private float y;
-
-    private float nextX;
-    private float nextY;
-
-    private float speed = 600;
-
     private boolean flipped = false;
 
     private float currentFrameTime;
 
-    public Dude() {
-        this(0, 0, 0, 0);
-    }
-    public Dude(float x, float y) {
-        this(x, y, x, y);
-    }
-
-    public Dude(float x, float y, float nextX, float nextY) {
+    public Dude(MapManager map, Tile tile) {
+    	super(map);
+    	this.speed = 5;
+    	this.map = map;
+    	this.tile = tile;
+    	
+    	this.lAxis = tile.getLayer();
+    	this.rAxis = tile.getRow();
+    	this.cAxis = tile.getColumn();
+    	
+    	this.x = map.getRenderer().getX() + (tile.getRow() - tile.getColumn()) * (map.getRenderer().getCellWidth() / 2f);
+    	this.y = map.getRenderer().getY() - (tile.getRow() + tile.getColumn()) * (map.getRenderer().getCellHeight() / 2f) + map.getRenderer().getLayerHeight() * tile.getLayer();
+    	
         idleDude = new TextureAtlas("dude/idle.atlas");
         idleDudeAnimation = new Animation<>(1/10f, idleDude.getRegions());
 
@@ -45,27 +43,20 @@ public class Dude implements Disposable {
 
         currentDudeAnimation = idleDudeAnimation;
 
-        this.x = x;
-        this.y = y;
-        this.nextX = nextX;
-        this.nextY = nextY;
         currentFrameTime = 0;
+        
     }
 
     public void draw(SpriteBatch batch, float delta) {
         currentFrameTime += delta;
+        
+        move(delta);
 
-        Vector2 v = new Vector2(nextX - x, nextY - y);
-        float xOffset = x + MathUtils.cosDeg(v.angle()) * speed * delta;
-        float yOffset = y + MathUtils.sinDeg(v.angle()) * speed * delta;
+        if (direction.x > 0) flipped = false;
+        if (direction.x < 0) flipped = true;
 
-        if (nextX > x) flipped = false;
-        if (nextX < x) flipped = true;
-
-        if (x != nextX || y != nextY) {
+        if (nextTile != null && (lAxis != nextTile.getLayer() || rAxis != nextTile.getRow() || cAxis != nextTile.getColumn())) {
             switchAnimation(moveDudeAnimation);
-            x = x > nextX ? Math.max(nextX, xOffset) : Math.min(nextX, xOffset);
-            y = y > nextY ? Math.max(nextY, yOffset) : Math.min(nextY, yOffset);
         } else {
             switchAnimation(idleDudeAnimation);
         }
@@ -77,7 +68,7 @@ public class Dude implements Disposable {
         batch.draw(
                 dudeFrame,
                 x - dudeFrame.getRegionWidth() / 10f,
-                y - dudeFrame.getRegionHeight() / 10f + 50,
+                y - dudeFrame.getRegionHeight() / 10f,
                 dudeFrame.getRegionWidth() / 5f,
                 dudeFrame.getRegionHeight() / 5f);
     }
@@ -95,43 +86,4 @@ public class Dude implements Disposable {
         moveDude.dispose();
     }
 
-    public float getX() {
-        return x;
-    }
-
-    public void setX(float x) {
-        this.x = x;
-    }
-
-    public float getY() {
-        return y;
-    }
-
-    public void setY(float y) {
-        this.y = y;
-    }
-
-    public float getNextX() {
-        return nextX;
-    }
-
-    public void setNextX(float nextX) {
-        this.nextX = nextX;
-    }
-
-    public float getNextY() {
-        return nextY;
-    }
-
-    public void setNextY(float nextY) {
-        this.nextY = nextY;
-    }
-
-    public float getSpeed() {
-        return speed;
-    }
-
-    public void setSpeed(float speed) {
-        this.speed = speed;
-    }
 }

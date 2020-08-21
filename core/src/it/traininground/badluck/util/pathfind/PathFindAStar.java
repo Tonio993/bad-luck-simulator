@@ -9,12 +9,14 @@ import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
 
+import it.traininground.badluck.util.InfoDrawer;
 import it.traininground.badluck.util.statistics.TimeStats;
+
 
 public abstract class PathFindAStar<T> implements PathFind<T> {
 	
 	public List<T> findPath(T from, T to) {
-		TimeStats.start("Total");
+		TimeStats.start("findPath");
 		TreeMap<Float, LinkedList<T>> openSet = new TreeMap<>();
 		openSet.put(0f, new LinkedList<T>(Arrays.asList(from)));
 		
@@ -29,39 +31,23 @@ public abstract class PathFindAStar<T> implements PathFind<T> {
 		gScore.put(from, heuristic(from, to));
 		
 		while (!openSet.isEmpty()) {
-			TimeStats.start("Lowest F");
 			LinkedList<T> lowestF = openSet.firstEntry().getValue();
 			T current = lowestF.getFirst();
-			TimeStats.stop("Lowest F");
 			if (current.equals(to)) {
-				System.out.println("Total Time: " + TimeStats.stopAndGet("Total") + "ms");
-				System.out.println("Lowest F Time: " + TimeStats.get("Lowest F") + "ms");
-				System.out.println("Score Time: " + TimeStats.get("Score") + "ms");
-				System.out.println("Score Step 1 Time: " + TimeStats.get("Score Step 1") + "ms");
-				System.out.println("Score Step 2 Time: " + TimeStats.get("Score Step 2") + "ms");
-				System.out.println("Score Step 3 Time: " + TimeStats.get("Score Step 3") + "ms");
-				System.out.println("Neighbors Time: " + TimeStats.get("Neighbors") + "ms");
+				InfoDrawer.put("find path", TimeStats.stopGetAndReset("findPath"));
 				return reconstructPath(cameFrom, current);
 			}
 			lowestF.removeFirst();
 			if (lowestF.isEmpty()) {
 				openSet.remove(openSet.firstKey());
 			}
-			TimeStats.start("Neighbors");
 			Set<T> neighbors = neighbors(current); 
-			TimeStats.stop("Neighbors");
 			for (T neighbor : neighbors) {
 				if (closeSet.contains(neighbor)) {
 					continue;
 				}
-				TimeStats.start("Score");
-				TimeStats.start("Score Step 1");
 				float currentG = gScore.get(current) + distance(current, neighbor);
-				TimeStats.stop("Score Step 1");
-				TimeStats.start("Score Step 2");
 				boolean flag = currentG < gScore.getOrDefault(neighbor, Float.MAX_VALUE); 
-				TimeStats.stop("Score Step 2");
-				TimeStats.start("Score Step 3");
 				if (flag) {
 					cameFrom.put(neighbor, current);
 					gScore.put(neighbor, currentG);
@@ -72,17 +58,10 @@ public abstract class PathFindAStar<T> implements PathFind<T> {
 					}
 					openSetPut.add(neighbor);
 				}
-				TimeStats.stop("Score Step 3");
-				TimeStats.stop("Score");
 			}
 			closeSet.add(current);
 		}
-		System.out.println("Total Time: " + TimeStats.stopAndGet("Total") + "ms");
-		System.out.println("Lowest F Time: " + TimeStats.get("Lowest F") + "ms");
-		System.out.println("Score Time: " + TimeStats.get("Score") + "ms");
-		System.out.println("Score Step 1 Time: " + TimeStats.get("Score Step 1") + "ms");
-		System.out.println("Score Step 2 Time: " + TimeStats.get("Score Step 2") + "ms");
-		System.out.println("Neighbors Time: " + TimeStats.get("Neighbors") + "ms");
+		InfoDrawer.put("find path", TimeStats.stopGetAndReset("findPath"));
 		return null;
 	}
 	

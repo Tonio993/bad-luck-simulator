@@ -29,6 +29,13 @@ public final class TimeStats {
 		return get(name);
 	}
 	
+	public static long stopGetAndReset(String name) {
+		stop(name);
+		long result = get(name);
+		reset(name);
+		return result;
+	}
+	
 	public static long get(String name) {
 		return timeStat.get(name);
 	}

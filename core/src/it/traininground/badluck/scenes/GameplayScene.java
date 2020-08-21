@@ -34,7 +34,7 @@ public class GameplayScene extends Scene {
         super(game);
 
 		TilesMap tiles;
-		tiles = new TilesMapBuilder(1000, 20, 20).setBaseLayer(0).build();
+		tiles = new TilesMapBuilder(100, 20, 20).setBaseLayer(0).build();
 
 		tiles.tile(1, 3, 3, TileType.PLAIN);
 		tiles.tile(1, 3, 2, TileType.DOWN_NORTH);
@@ -45,6 +45,8 @@ public class GameplayScene extends Scene {
 		tiles.tile(1, 4, 4, TileType.DOWN_SOUTH_EAST);
 		tiles.tile(1, 4, 3, TileType.DOWN_EAST);
 		tiles.tile(1, 4, 2, TileType.DOWN_NORTH_EAST);
+		
+		tiles.tile(1, 8,  8, TileType.PLAIN);
 
 		for (int i = 1; i < 20; i++) {
 			tiles.tile(i, i, 9, TileType.PLAIN);
@@ -61,14 +63,14 @@ public class GameplayScene extends Scene {
         MapSelection selection = new MapSelection();
         
         map = new MapManager(this, tiles, renderer, region, selection);
-        map.setDebugMode(true);
+//        map.setDebugMode(true);
 
         input.bind(new CameraMoveInput(input));
         input.bind(new UpdateRegionInput(input));
         input.bind(new GameCloseInput(input));
         input.bind(new MapSelectionHandler(input));
         
-        dude = new Dude(GameInfo.WIDTH/2, GameInfo.HEIGHT/2);
+        dude = new Dude(map, new Tile(1, 0, 5));
         input.bind(new DudeInput(input, dude));
         
         TilePathFindAStar pathfind = new TilePathFindAStar(tiles);
