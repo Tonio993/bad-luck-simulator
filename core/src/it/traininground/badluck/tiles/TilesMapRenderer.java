@@ -1,12 +1,8 @@
 package it.traininground.badluck.tiles;
 
-import java.util.Collections;
-import java.util.LinkedHashSet;
-import java.util.Set;
-
 public abstract class TilesMapRenderer {
 
-    protected Set<TileDrawer> tileDrawerSet;
+    protected TileDrawerManager tileDrawers;
 
     protected int x;
     protected int y;
@@ -19,20 +15,16 @@ public abstract class TilesMapRenderer {
         this.cellHeight = cellHeight;
         this.layerHeight = layerHeight;
 
-        tileDrawerSet = new LinkedHashSet<>();
+        tileDrawers = new TileDrawerManager();
     }
 
-    public Set<TileDrawer> getTileDrawerSet() {
-        return Collections.unmodifiableSet(tileDrawerSet);
-    }
+	public TileDrawerManager getTileDrawers() {
+		return tileDrawers;
+	}
 
-    public void add(TileDrawer tileDrawer) {
-        tileDrawerSet.add(tileDrawer);
-    }
-
-    public void remove(TileDrawer tileDrawer) {
-        tileDrawerSet.remove(tileDrawer);
-    }
+	public void setTileDrawers(TileDrawerManager tileDrawers) {
+		this.tileDrawers = tileDrawers;
+	}
 
 	public int getX() {
 		return x;

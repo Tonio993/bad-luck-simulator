@@ -37,7 +37,7 @@ public class TilePathFindAStar extends PathFindAStar<Tile> {
 					if (row == current.getRow() && column == current.getColumn()) {
 						continue;
 					}
-					if (map.tile(layer, row, column) == TileType.EMPTY && map.tile(layer - 1, row, column) == TileType.PLAIN) {
+					if (map.tile(layer, row, column) == TileType.EMPTY && map.tile(layer - 1, row, column) != TileType.EMPTY) {
 						neighbors.add(new Tile(layer, row, column));
 					}
 				}

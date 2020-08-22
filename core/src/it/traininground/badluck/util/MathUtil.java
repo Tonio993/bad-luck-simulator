@@ -1,5 +1,8 @@
 package it.traininground.badluck.util;
 
+import java.math.BigDecimal;
+import java.math.RoundingMode;
+
 public class MathUtil {
 
     private MathUtil() {}
@@ -8,30 +11,12 @@ public class MathUtil {
         return Math.min(Math.max(value, min), max);
     }
 
-    public static int max(int ...values) {
-        if (values.length == 0) {
-            throw new IllegalArgumentException("At least one argument must be passed");
-        }
-        int result = values[0];
-        for (int i = 1; i < values.length; i++) {
-            if (values[i] > result) {
-                result = values[i];
-            }
-        }
-        return result;
-    }
+    public static float round(float value, int places) {
+        if (places < 0) throw new IllegalArgumentException();
 
-    public static int min(int ...values) {
-        if (values.length == 0) {
-            throw new IllegalArgumentException("At least one argument must be passed");
-        }
-        int result = values[0];
-        for (int i = 1; i < values.length; i++) {
-            if (values[i] < result) {
-                result = values[i];
-            }
-        }
-        return result;
+        BigDecimal bd = BigDecimal.valueOf(value);
+        bd = bd.setScale(places, RoundingMode.HALF_UP);
+        return bd.floatValue();
     }
 
 }

@@ -24,7 +24,7 @@ public class Dude extends IsoActor implements Disposable {
 
     public Dude(MapManager map, Tile tile) {
     	super(map);
-    	this.speed = 5;
+    	this.speed = 1;
     	this.map = map;
     	this.tile = tile;
     	

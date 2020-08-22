@@ -39,8 +39,12 @@ public class DudeInput extends InputHandler {
 			List<Tile> path = new TilePathFindAStar(map.getTiles()).findPath(dude.getTile(), selection.getHover().add(1, 0, 0));
 			if (path != null) {
 				path.remove(0);
+				if (!path.isEmpty() && path.get(0).equals(dude.getNextTile())) {
+					path.remove(0);
+				}
 			}
 			dude.setPath(path);
+			System.out.println(path);
 		}
 	}
 }

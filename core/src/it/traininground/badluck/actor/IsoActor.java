@@ -7,6 +7,8 @@ import com.badlogic.gdx.math.Vector3;
 
 import it.traininground.badluck.tiles.MapManager;
 import it.traininground.badluck.tiles.Tile;
+import it.traininground.badluck.util.InfoDrawer;
+import it.traininground.badluck.util.MathUtil;
 
 public class IsoActor {
 	
@@ -43,19 +45,24 @@ public class IsoActor {
 		Vector3 moveVector = new Vector3(vector);
 		moveVector.setLength(speed * delta);
 		if (vector.len() <= moveVector.len()) {
+			lAxis = nextTile.getLayer();
+			rAxis = nextTile.getRow();
+			cAxis = nextTile.getColumn();
 			tile = nextTile;
 			nextTile = path != null && !path.isEmpty() ? path.remove(0) : null;
+		} else {
+			lAxis += moveVector.x;
+			rAxis += moveVector.y;
+			cAxis += moveVector.z;
 		}
-        
-        lAxis += moveVector.x;
-        rAxis += moveVector.y;
-        cAxis += moveVector.z;
         
     	float nextX = map.getRenderer().getX() + (rAxis - cAxis) * (map.getRenderer().getCellWidth() / 2f);
     	float nextY = map.getRenderer().getY() - (rAxis + cAxis) * (map.getRenderer().getCellHeight() / 2f) + map.getRenderer().getLayerHeight() * lAxis;
     	
-    	direction.set(nextX - x, nextY - y);
-    	direction.nor();
+    	direction.set(MathUtil.round(nextX - x, 2), MathUtil.round(nextY - y, 2));
+    	direction.setLength(1);
+    	
+    	InfoDrawer.put("direction", direction);
     	
     	x = nextX;
     	y = nextY;

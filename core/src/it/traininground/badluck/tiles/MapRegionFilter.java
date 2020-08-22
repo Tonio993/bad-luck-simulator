@@ -8,7 +8,7 @@ public abstract class MapRegionFilter {
 
     public abstract void updateRegion(MapManager map);
 
-    public abstract void drawFilteredRegion(MapManager map);
+    public abstract void drawFilteredRegion(MapManager map, float delta);
 
 	public int getLowerLayer() {
 		return lowerLayer;

@@ -26,8 +26,8 @@ public class MapManager {
 		region.updateRegion(this);
 	}
 
-	public void draw(Batch batch) {
-		this.region.drawFilteredRegion(this);
+	public void draw(Batch batch, float delta) {
+		this.region.drawFilteredRegion(this, delta);
 	}
 	
 	public Vector2 getTilePosition(Tile tile) {

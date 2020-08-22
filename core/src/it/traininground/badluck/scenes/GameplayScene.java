@@ -23,7 +23,6 @@ import it.traininground.badluck.tiles.TilesMapBuilder;
 import it.traininground.badluck.tiles.TilesMapRendererImpl;
 import it.traininground.badluck.util.GameInfo;
 import it.traininground.badluck.util.InfoDrawer;
-import it.traininground.badluck.util.pathfind.TilePathFindAStar;
 
 public class GameplayScene extends Scene {
 
@@ -34,7 +33,7 @@ public class GameplayScene extends Scene {
         super(game);
 
 		TilesMap tiles;
-		tiles = new TilesMapBuilder(100, 20, 20).setBaseLayer(0).build();
+		tiles = new TilesMapBuilder(100, 100, 100).setBaseLayer(0).build();
 
 		tiles.tile(1, 3, 3, TileType.PLAIN);
 		tiles.tile(1, 3, 2, TileType.DOWN_NORTH);
@@ -70,12 +69,11 @@ public class GameplayScene extends Scene {
         input.bind(new GameCloseInput(input));
         input.bind(new MapSelectionHandler(input));
         
-        dude = new Dude(map, new Tile(1, 0, 5));
+        dude = new Dude(map, new Tile(1, 0, 0));
         input.bind(new DudeInput(input, dude));
         
-        TilePathFindAStar pathfind = new TilePathFindAStar(tiles);
-        System.out.println(pathfind.findPath(new Tile(1, 0, 0), new Tile(39, 0, 10)));
-
+        renderer.dude = dude;
+        
     }
 
     @Override
@@ -94,8 +92,7 @@ public class GameplayScene extends Scene {
         game.getBatch().begin();
         game.getBatch().setProjectionMatrix(camera.getMain().combined);
 
-        map.draw(game.getBatch());
-        dude.draw(game.getBatch(), delta);
+        map.draw(game.getBatch(), delta);
 
         InfoDrawer.draw(game.getBatch());
 
@@ -103,7 +100,8 @@ public class GameplayScene extends Scene {
 
 
         InfoDrawer.put("fps", Gdx.graphics.getFramesPerSecond());
-
+        InfoDrawer.put("java heap", String.format("%.02f mb", Gdx.app.getJavaHeap() / 1048576f));
+        InfoDrawer.put("native heap", String.format("%.02f mb", Gdx.app.getNativeHeap() / 1048576f));
     }
 
     @Override
