@@ -1,6 +1,6 @@
 package it.traininground.badluck.tiles;
 
-public class Tile {
+public class Tile implements Comparable<Tile> {
 
 	private int layer;
 	private int row;
@@ -90,6 +90,11 @@ public class Tile {
 		if (row != other.row)
 			return false;
 		return true;
+	}
+
+	@Override
+	public int compareTo(Tile t) {
+		return layer != t.layer ? t.layer - layer : (t.row + t.column) - (row + column);
 	}
 
 }

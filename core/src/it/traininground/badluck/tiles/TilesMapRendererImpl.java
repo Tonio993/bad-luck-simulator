@@ -39,16 +39,6 @@ public class TilesMapRendererImpl extends TilesMapRenderer {
         terrainMap.put(TileType.DOWN_EAST, terrain.findRegion("terrain_DE"));
         terrainMap.put(TileType.DOWN_NORTH_EAST, terrain.findRegion("terrain_DNE"));
         
-        tileDrawers.set(TileDrawerManager.MID_PRIORITY,
-				(map, layer, row, column, delta) -> {
-					Tile tile = dude.getNextTile() != null ? dude.getNextTile() : dude.getTile();
-					if (dude != null && tile.getLayer() == layer && tile.getRow() == row && tile.getColumn() == column) {
-						GameBatch batch = map.scene.getGame().getBatch();
-						dude.draw(batch, delta);
-					}
-				}
-		);
-
 		tileDrawers.set(TileDrawerManager.MID_PRIORITY, (map, layer, row, column, delta) -> {
 			if (map.isDebugMode())
 				return;
@@ -102,6 +92,16 @@ public class TilesMapRendererImpl extends TilesMapRenderer {
 			shapeDrawer.line(x - 10, y, x + 10, y);
 			shapeDrawer.line(x, y - 10, x, y + 10);
 		});
+
+        tileDrawers.set(TileDrawerManager.MID_PRIORITY,
+				(map, layer, row, column, delta) -> {
+					Tile tile = new Tile(Math.round(dude.getlAxis()), Math.round(dude.getrAxis()), Math.round(dude.getcAxis()));
+					if (dude != null && tile.getLayer() == layer && tile.getRow() == row && tile.getColumn() == column) {
+						GameBatch batch = map.scene.getGame().getBatch();
+						dude.draw(batch, delta);
+					}
+				}
+		);
 
 	}
 }

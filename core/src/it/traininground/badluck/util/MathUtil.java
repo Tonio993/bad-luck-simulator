@@ -6,7 +6,15 @@ import java.math.RoundingMode;
 public class MathUtil {
 
     private MathUtil() {}
+    
+    public static <T extends Comparable<T>> T min(T v1, T v2) {
+    	return v1.compareTo(v2) <= 0 ? v1 : v2;
+    }
 
+    public static <T extends Comparable<T>> T max(T v1, T v2) {
+    	return v1.compareTo(v2) >= 0 ? v1 : v2;
+    }
+    
     public static int between(int value, int min, int max) {
         return Math.min(Math.max(value, min), max);
     }

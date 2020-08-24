@@ -13,6 +13,10 @@ public final class TimeStats {
 		startTime.put(name, System.currentTimeMillis());
 	}
 	
+	public static boolean started(String name) {
+		return startTime.containsKey(name);
+	}
+	
 	public static void reset(String name) {
 		timeStat.remove(name);
 		startTime.remove(name);
@@ -30,13 +34,12 @@ public final class TimeStats {
 	}
 	
 	public static long stopGetAndReset(String name) {
-		stop(name);
-		long result = get(name);
+		long result = stopAndGet(name);
 		reset(name);
 		return result;
 	}
 	
 	public static long get(String name) {
-		return timeStat.get(name);
+		return timeStat.getOrDefault(name, 0l);
 	}
 }

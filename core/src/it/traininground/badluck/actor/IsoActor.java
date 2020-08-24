@@ -9,8 +9,9 @@ import it.traininground.badluck.tiles.MapManager;
 import it.traininground.badluck.tiles.Tile;
 import it.traininground.badluck.util.InfoDrawer;
 import it.traininground.badluck.util.MathUtil;
+import it.traininground.badluck.util.statistics.TimeStats;
 
-public class IsoActor {
+public class IsoActor implements Actor {
 	
 	protected MapManager map;
 	
@@ -40,20 +41,27 @@ public class IsoActor {
 			}
 			nextTile = path.remove(0);
 		}
-        
-		Vector3 vector = new Vector3(nextTile.getLayer() - lAxis, nextTile.getRow() - rAxis, nextTile.getColumn() - cAxis);
-		Vector3 moveVector = new Vector3(vector);
-		moveVector.setLength(speed * delta);
-		if (vector.len() <= moveVector.len()) {
-			lAxis = nextTile.getLayer();
-			rAxis = nextTile.getRow();
-			cAxis = nextTile.getColumn();
-			tile = nextTile;
-			nextTile = path != null && !path.isEmpty() ? path.remove(0) : null;
-		} else {
-			lAxis += moveVector.x;
-			rAxis += moveVector.y;
-			cAxis += moveVector.z;
+		if (!TimeStats.started("move")) {
+			TimeStats.start("move");
+		}
+		float step = speed * delta;
+		while (nextTile != null) {
+			Vector3 vector = new Vector3(nextTile.getLayer() - lAxis, nextTile.getRow() - rAxis, nextTile.getColumn() - cAxis);
+			if (step >= vector.len()) {
+				tile = nextTile;
+				lAxis = nextTile.getLayer();
+				rAxis = nextTile.getRow();
+				cAxis = nextTile.getColumn();
+				nextTile = path != null && !path.isEmpty() ? path.remove(0) : null;
+				step -= vector.len();
+			} else {
+				Vector3 moveVector = new Vector3(vector);
+				moveVector.setLength(step);
+				lAxis += moveVector.x;
+				rAxis += moveVector.y;
+				cAxis += moveVector.z;
+				break;
+			}
 		}
         
     	float nextX = map.getRenderer().getX() + (rAxis - cAxis) * (map.getRenderer().getCellWidth() / 2f);
@@ -62,10 +70,12 @@ public class IsoActor {
     	direction.set(MathUtil.round(nextX - x, 2), MathUtil.round(nextY - y, 2));
     	direction.setLength(1);
     	
-    	InfoDrawer.put("direction", direction);
-    	
     	x = nextX;
     	y = nextY;
+    	
+    	if (nextTile == null) {
+    		InfoDrawer.put("movement", TimeStats.stopGetAndReset("move"));
+    	}
 
 	}
 
