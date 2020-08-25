@@ -4,11 +4,13 @@ import it.traininground.badluck.util.LinkedHashMultiSet;
 
 public class MapSelection {
 	
+	protected MapManager map;
+	
 	protected Tile hover;
 	protected LinkedHashMultiSet<Integer> active;
 	
-	public MapSelection() {
-		this.hover = new Tile();
+	public MapSelection(MapManager map) {
+		this.map = map;
 		this.active = new LinkedHashMultiSet<Integer>();
 	}
 	
@@ -17,23 +19,23 @@ public class MapSelection {
 	}
 	
 	public void setHover(int layer, int row, int column) {
-		hover.set(layer, row, column);
+		hover = map.getTiles().get(layer, row, column);
 	}
 	
 	public void unsetHover() {
-		hover.unset();
+		hover = null;
 	}
 	
 	public boolean isHover() {
-		return hover.getLayer() != -1;
+		return hover != null;
 	}
 
 	public boolean isHover(Tile tile) {
-		return hover.equals(tile);
+		return hover == tile;
 	}
 	
 	public boolean isHover(int layer, int row, int column) {
-		return hover.getLayer() == layer && hover.getRow() == row && hover.getColumn() == column;
+		return hover != null && hover.layer == layer && hover.row == row && hover.column == column;
 	}
 	
 	public void clearActive() {
@@ -41,11 +43,11 @@ public class MapSelection {
 	}
 
 	public void addActive(Tile tile) {
-		active.addSequence(tile.getLayer(), tile.getRow(), tile.getColumn());
+		active.addSequence(tile.layer, tile.row, tile.column);
 	}
 	
 	public boolean isActive(Tile tile) {
-		return active.containsSequence(tile.getLayer(), tile.getRow(), tile.getColumn());
+		return active.containsSequence(tile.layer, tile.row, tile.column);
 	}
 	
 	public boolean isActive(int layer, int row, int column) {

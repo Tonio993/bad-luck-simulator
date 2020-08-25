@@ -18,10 +18,10 @@ import it.traininground.badluck.tiles.MapManager;
 import it.traininground.badluck.tiles.MapRegionFilter;
 import it.traininground.badluck.tiles.MapRegionFilterImpl;
 import it.traininground.badluck.tiles.MapSelection;
-import it.traininground.badluck.tiles.Tile;
 import it.traininground.badluck.tiles.TileType;
 import it.traininground.badluck.tiles.TilesMap;
 import it.traininground.badluck.tiles.TilesMapBuilder;
+import it.traininground.badluck.tiles.TilesMapRenderer;
 import it.traininground.badluck.tiles.TilesMapRendererImpl;
 import it.traininground.badluck.util.GameInfo;
 import it.traininground.badluck.util.InfoDrawer;
@@ -33,49 +33,52 @@ public class GameplayScene extends Scene {
     public GameplayScene(GameMain game) throws IOException, ClassNotFoundException {
         super(game);
 
-		TilesMap tiles;
-		tiles = new TilesMapBuilder(100, 100, 100).setBaseLayer(0).build();
+        map = new MapManager(this);
 
-		tiles.tile(1, 3, 3, TileType.PLAIN);
-		tiles.tile(1, 3, 2, TileType.DOWN_NORTH);
-		tiles.tile(1, 2, 2, TileType.DOWN_NORTH_WEST);
-		tiles.tile(1, 2, 3, TileType.DOWN_WEST);
-		tiles.tile(1, 2, 4, TileType.DOWN_SOUTH_WEST);
-		tiles.tile(1, 3, 4, TileType.DOWN_SOUTH);
-		tiles.tile(1, 4, 4, TileType.DOWN_SOUTH_EAST);
-		tiles.tile(1, 4, 3, TileType.DOWN_EAST);
-		tiles.tile(1, 4, 2, TileType.DOWN_NORTH_EAST);
-		
-		tiles.tile(1, 8,  8, TileType.PLAIN);
-
+        TilesMap tiles = new TilesMapBuilder(100, 100, 100).setBaseLayer(0).build();
+		tiles.get(1, 3, 3).setType(TileType.PLAIN);
+		tiles.get(1, 3, 2).setType(TileType.DOWN_NORTH);
+		tiles.get(1, 2, 2).setType(TileType.DOWN_NORTH_WEST);
+		tiles.get(1, 2, 3).setType(TileType.DOWN_WEST);
+		tiles.get(1, 2, 4).setType(TileType.DOWN_SOUTH_WEST);
+		tiles.get(1, 3, 4).setType(TileType.DOWN_SOUTH);
+		tiles.get(1, 4, 4).setType(TileType.DOWN_SOUTH_EAST);
+		tiles.get(1, 4, 3).setType(TileType.DOWN_EAST);
+		tiles.get(1, 4, 2).setType(TileType.DOWN_NORTH_EAST);
+		tiles.get(1, 8,  8).setType(TileType.PLAIN);
 		for (int i = 1; i < 20; i++) {
-			tiles.tile(i, i, 9, TileType.PLAIN);
+			tiles.get(i, i, 9).setType(TileType.PLAIN);
 		}
 		for (int i = 20; i < 40; i++) {
-			tiles.tile(i - 1, 39 - i, 10, TileType.PLAIN);
+			tiles.get(i - 1, 39 - i, 10).setType(TileType.PLAIN);
 		}
-
-        TilesMapRendererImpl renderer = new TilesMapRendererImpl(64, 32, 32);
+		map.setTiles(tiles);
+		
+        TilesMapRenderer renderer = new TilesMapRendererImpl(map, 64, 32, 32);
         renderer.setX(GameInfo.WIDTH/2);
         renderer.setY(GameInfo.HEIGHT/2);
+        map.setRenderer(renderer);
+
+        MapRegionFilter region = new MapRegionFilterImpl(map);
+        map.setRegion(region);
         
-        MapRegionFilter region = new MapRegionFilterImpl();
-        MapSelection selection = new MapSelection();
+        MapSelection selection = new MapSelection(map);
+        map.setSelection(selection);
         
-        IsoActorsMap actors = new IsoActorsMap();
-        
-        map = new MapManager(this, tiles, renderer, region, selection, actors);
-//        map.setDebugMode(true);
+        IsoActorsMap actors = new IsoActorsMap(map);
+        map.setActors(actors);
 
         input.bind(new CameraMoveInput(input));
         input.bind(new UpdateRegionInput(input));
         input.bind(new GameCloseInput(input));
         input.bind(new MapSelectionHandler(input));
         
-        Dude dude = new Dude(map, new Tile(1, 0, 0));
+        Dude dude = new Dude(map, tiles.get(1, 0, 0));
         input.bind(new DudeInput(input, dude, Buttons.LEFT));
         actors.add(dude);
         gameplay.add(dude);
+        
+        map.init();
 
     }
 

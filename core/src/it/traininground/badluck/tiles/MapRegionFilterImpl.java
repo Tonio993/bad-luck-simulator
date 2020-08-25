@@ -17,7 +17,8 @@ public class MapRegionFilterImpl extends MapRegionFilter {
     private float gridSizeX;
     private float gridSizeY;
 
-    public MapRegionFilterImpl() {
+    public MapRegionFilterImpl(MapManager map) {
+    	super(map);
         this.screenSizeX = GameInfo.WIDTH / 2f;
         this.screenSizeY = GameInfo.HEIGHT / 2f;
     }
@@ -50,21 +51,13 @@ public class MapRegionFilterImpl extends MapRegionFilter {
     				int upperTile = Math.min(Math.min(map.tiles.columns, upperTileX + row), upperTileY - row);
     				for (int column = lowerTile; column < upperTile; column++) {
     					for (TileDrawer tileDrawer : drawers) {
-    						tileDrawer.draw(map, layer, row, column, delta);
+    						tileDrawer.draw(layer, row, column, delta);
     					}
     				}
     			}
     		}
     	}
     }
-
-    public int getVisibleLayerLevel() {
-		return visibleLayer;
-	}
-
-	public void setVisibleLayerLevel(int visibleLayerLevel) {
-		this.visibleLayer = visibleLayerLevel;
-	}
 
 	public float getScreenSizeX() {
 		return screenSizeX;

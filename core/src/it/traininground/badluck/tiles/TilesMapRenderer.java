@@ -1,6 +1,8 @@
 package it.traininground.badluck.tiles;
 
 public abstract class TilesMapRenderer {
+	
+	protected MapManager map;
 
     protected TileDrawerManager tileDrawers;
 
@@ -10,12 +12,13 @@ public abstract class TilesMapRenderer {
     protected int cellHeight;
     protected int layerHeight;
 
-    public TilesMapRenderer(int cellWidth, int cellHeight, int layerHeight) {
+    public TilesMapRenderer(MapManager map, int cellWidth, int cellHeight, int layerHeight) {
+    	this.map = map;
         this.cellWidth = cellWidth;
         this.cellHeight = cellHeight;
         this.layerHeight = layerHeight;
 
-        tileDrawers = new TileDrawerManager();
+        tileDrawers = new TileDrawerManager(map);
     }
 
 	public TileDrawerManager getTileDrawers() {
@@ -24,6 +27,14 @@ public abstract class TilesMapRenderer {
 
 	public void setTileDrawers(TileDrawerManager tileDrawers) {
 		this.tileDrawers = tileDrawers;
+	}
+
+	public MapManager getMap() {
+		return map;
+	}
+
+	public void setMap(MapManager map) {
+		this.map = map;
 	}
 
 	public int getX() {

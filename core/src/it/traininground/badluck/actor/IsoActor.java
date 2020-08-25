@@ -10,7 +10,6 @@ import it.traininground.badluck.tiles.IsoActorsMap;
 import it.traininground.badluck.tiles.MapManager;
 import it.traininground.badluck.tiles.Tile;
 import it.traininground.badluck.util.GameBatch;
-import it.traininground.badluck.util.InfoDrawer;
 import it.traininground.badluck.util.MathUtil;
 import it.traininground.badluck.util.statistics.TimeStats;
 
@@ -41,14 +40,14 @@ public abstract class IsoActor implements Actor {
 		this.map = map;
 		
     	this.tile = tile;
-    	this.drawingTile = new Tile(tile);
+    	this.drawingTile = tile;
     	
-    	this.lAxis = tile.getLayer();
-    	this.rAxis = tile.getRow();
-    	this.cAxis = tile.getColumn();
+    	this.lAxis = tile.layer;
+    	this.rAxis = tile.row;
+    	this.cAxis = tile.column;
     	
-    	this.x = map.getRenderer().getX() + (tile.getRow() - tile.getColumn()) * (map.getRenderer().getCellWidth() / 2f);
-    	this.y = map.getRenderer().getY() - (tile.getRow() + tile.getColumn()) * (map.getRenderer().getCellHeight() / 2f) + map.getRenderer().getLayerHeight() * tile.getLayer();
+    	this.x = map.getRenderer().getX() + (tile.row - tile.column) * (map.getRenderer().getCellWidth() / 2f);
+    	this.y = map.getRenderer().getY() - (tile.row + tile.column) * (map.getRenderer().getCellHeight() / 2f) + map.getRenderer().getLayerHeight() * tile.layer;
     	
     	listenersMap = new LinkedList<>();
 	}
@@ -65,12 +64,12 @@ public abstract class IsoActor implements Actor {
 		}
 		float step = speed * delta;
 		while (nextTile != null) {
-			Vector3 vector = new Vector3(nextTile.getLayer() - lAxis, nextTile.getRow() - rAxis, nextTile.getColumn() - cAxis);
+			Vector3 vector = new Vector3(nextTile.layer - lAxis, nextTile.row - rAxis, nextTile.column - cAxis);
 			if (step >= vector.len()) {
 				tile = nextTile;
-				lAxis = nextTile.getLayer();
-				rAxis = nextTile.getRow();
-				cAxis = nextTile.getColumn();
+				lAxis = nextTile.layer;
+				rAxis = nextTile.row;
+				cAxis = nextTile.column;
 				nextTile = path != null && !path.isEmpty() ? path.remove(0) : null;
 				step -= vector.len();
 			} else {
@@ -92,18 +91,13 @@ public abstract class IsoActor implements Actor {
     	x = nextX;
     	y = nextY;
     	
-    	if (nextTile == null) {
-    		InfoDrawer.put("movement", TimeStats.stopGetAndReset("move"));
-    	}
-    	
-    	Tile nextDrawingTile = new Tile(Math.round(getlAxis()), Math.round(getrAxis()), Math.round(getcAxis()));
-    	if (!drawingTile.equals(nextDrawingTile)) {
+    	Tile nextDrawingTile = map.getTiles().get(Math.round(getlAxis()), Math.round(getrAxis()), Math.round(getcAxis()));
+    	if (drawingTile != null && drawingTile != nextDrawingTile) {
     		for (IsoActorsMap listener : listenersMap) {
     			listener.move(this, nextDrawingTile);
     		}
     	}
-    	drawingTile.set(nextDrawingTile);
-
+    	drawingTile = nextDrawingTile;
 	}
 	
 	public abstract void draw(GameBatch batch, float delta);

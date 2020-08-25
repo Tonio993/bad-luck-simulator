@@ -9,9 +9,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
 
-import it.traininground.badluck.util.InfoDrawer;
 import it.traininground.badluck.util.statistics.TimeStats;
-
 
 public abstract class PathFindAStar<T> implements PathFind<T> {
 	
@@ -34,7 +32,6 @@ public abstract class PathFindAStar<T> implements PathFind<T> {
 			LinkedList<T> lowestF = openSet.firstEntry().getValue();
 			T current = lowestF.getFirst();
 			if (current.equals(to)) {
-				InfoDrawer.put("find path", TimeStats.stopGetAndReset("findPath"));
 				return reconstructPath(cameFrom, current);
 			}
 			lowestF.removeFirst();
@@ -61,7 +58,6 @@ public abstract class PathFindAStar<T> implements PathFind<T> {
 			}
 			closeSet.add(current);
 		}
-		InfoDrawer.put("find path", TimeStats.stopGetAndReset("findPath"));
 		return null;
 	}
 	

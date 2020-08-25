@@ -2,73 +2,46 @@ package it.traininground.badluck.tiles;
 
 public class Tile implements Comparable<Tile> {
 
-	private int layer;
-	private int row;
-	private int column;
+	private final TilesMap map;
+	public final int layer;
+	public final int row;
+	public final int column;
+	
+	private TileType type;
 
-	public Tile() {
-		this(-1, -1, -1);
-	}
-	
-	public Tile(Tile tile) {
-		this.layer = tile.layer;
-		this.row = tile.row;
-		this.column = tile.column;
-	}
-	
-	public Tile(int layer, int row, int column) {
-		super();
+	Tile(TilesMap map, int layer, int row, int column) {
+		this.map = map;
 		this.layer = layer;
 		this.row = row;
 		this.column = column;
 	}
 
-	public int getLayer() {
-		return layer;
+	public Tile toLayer(int layer) {
+		return map.get(layer, this.row, this.column);
 	}
 
-	public void setLayer(int layer) {
-		this.layer = layer;
+	public Tile toRow(int row) {
+		return map.get(this.layer, row, this.column);
 	}
 
-	public int getRow() {
-		return row;
-	}
-
-	public void setRow(int row) {
-		this.row = row;
-	}
-
-	public int getColumn() {
-		return column;
-	}
-
-	public void setColumn(int column) {
-		this.column = column;
+	public Tile toColumn(int column) {
+		return map.get(this.layer, this.row, column);
 	}
 	
-	public void set(int layer, int row, int column) {
-		this.layer = layer;
-		this.row = row;
-		this.column = column;
+	public Tile addLayer(int offset) {
+		return map.get(this.layer + offset, this.row, this.column);
 	}
 	
-	public void set(Tile tile) {
-		this.layer = tile.layer;
-		this.row = tile.row;
-		this.column = tile.column;
-	}
-
-	public void unset() {
-		this.layer = this.row = this.column = -1;
+	public Tile addRow(int offset) {
+		return map.get(this.layer, this.row + offset, this.column);
 	}
 	
-	public Tile add(Tile tile) {
-		return new Tile(this.layer + tile.layer, this.row + tile.row, this.column + tile.column);
+	public Tile addColumn(int offset) {
+		return map.get(this.layer, this.row, this.column + offset);
 	}
 	
 	public Tile add(int layer, int row, int column) {
-		return new Tile(this.layer + layer, this.row + row, this.column + column);
+		return map.get(this.layer + layer, this.row + row, this.column + column);
 	}
 
 	@Override
@@ -111,6 +84,14 @@ public class Tile implements Comparable<Tile> {
 	@Override
 	public int compareTo(Tile t) {
 		return layer != t.layer ? t.layer - layer : (t.row + t.column) - (row + column);
+	}
+
+	public TileType getType() {
+		return type;
+	}
+
+	public void setType(TileType type) {
+		this.type = type;
 	}
 
 }

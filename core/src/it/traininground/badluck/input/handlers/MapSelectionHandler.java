@@ -35,7 +35,7 @@ public class MapSelectionHandler extends InputHandler {
 			row = (int) Math.floor(gridProjectedY - gridProjectedX);
 			column = (int) Math.floor(gridProjectedY + gridProjectedX);
 			if (row >= 0 && row < map.getTiles().getRows() && column >= 0 && column < map.getTiles().getColumns()
-					&& map.getTiles().tile(layer, row, column) != TileType.EMPTY) {
+					&& map.getTiles().get(layer, row, column).getType() != TileType.EMPTY) {
 				map.getSelection().setHover(layer, row, column);
 				return;
 			}

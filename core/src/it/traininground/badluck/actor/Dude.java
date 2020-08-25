@@ -46,7 +46,7 @@ public class Dude extends IsoActor implements Disposable, Drawable {
         if (direction.x > 0) flipped = false;
         if (direction.x < 0) flipped = true;
 
-        if (nextTile != null && (lAxis != nextTile.getLayer() || rAxis != nextTile.getRow() || cAxis != nextTile.getColumn())) {
+        if (nextTile != null && (lAxis != nextTile.layer || rAxis != nextTile.row || cAxis != nextTile.column)) {
             switchAnimation(moveDudeAnimation);
         } else {
             switchAnimation(idleDudeAnimation);

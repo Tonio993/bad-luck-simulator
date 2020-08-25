@@ -21,8 +21,8 @@ public class TilesMapRendererImpl extends TilesMapRenderer {
 
     AtomicInteger drawnTiles = new AtomicInteger();
     
-    public TilesMapRendererImpl(int cellWidth, int cellHeight, int layerHeight) {
-        super(cellWidth, cellHeight, layerHeight);
+    public TilesMapRendererImpl(MapManager map, int cellWidth, int cellHeight, int layerHeight) {
+        super(map, cellWidth, cellHeight, layerHeight);
 
         debugShape = new CubeShape(cellWidth, cellHeight, layerHeight);
 
@@ -38,10 +38,10 @@ public class TilesMapRendererImpl extends TilesMapRenderer {
         terrainMap.put(TileType.DOWN_EAST, terrain.findRegion("terrain_DE"));
         terrainMap.put(TileType.DOWN_NORTH_EAST, terrain.findRegion("terrain_DNE"));
         
-		tileDrawers.set(TileDrawerManager.MID_PRIORITY, (map, layer, row, column, delta) -> {
+		tileDrawers.set(TileDrawerManager.MID_PRIORITY, (layer, row, column, delta) -> {
 			if (map.isDebugMode())
 				return;
-			TileType terrainType = map.tiles.tile(layer, row, column);
+			TileType terrainType = map.tiles.get(layer, row, column).getType();
 			if (terrainType != TileType.EMPTY) {
 				float currentOffsetX = x + (row - column - 1) * cellWidth / 2f;
 				float currentOffsetY = y - (row + column + 2) * cellHeight / 2f + layerHeight * (layer - 1);
@@ -50,10 +50,10 @@ public class TilesMapRendererImpl extends TilesMapRenderer {
 			}
 		});
 
-		tileDrawers.set(TileDrawerManager.MID_PRIORITY, (map, layer, row, column, delta) -> {
+		tileDrawers.set(TileDrawerManager.MID_PRIORITY, (layer, row, column, delta) -> {
 			if (!map.isDebugMode())
 				return;
-			TileType terrainType = map.tiles.tile(layer, row, column);
+			TileType terrainType = map.tiles.get(layer, row, column).getType();
 			if (terrainType != TileType.EMPTY) {
 				float debugLineOffsetX = x + (row - column) * cellWidth / 2f;
 				float debugLineOffsetY = y - (row + column) * cellHeight / 2f + layer * layerHeight;
@@ -64,7 +64,7 @@ public class TilesMapRendererImpl extends TilesMapRenderer {
 			}
 		});
 
-		tileDrawers.set(TileDrawerManager.HIGH_PRIORITY, (map, layer, row, column, delta) -> {
+		tileDrawers.set(TileDrawerManager.HIGH_PRIORITY, (layer, row, column, delta) -> {
 			if (map.selection.isHover(layer, row, column)) {
 				float offsetX = x + (row - column) * (cellWidth / 2f);
 				float offsetY = y - (row + column) * (cellHeight / 2f) + layer * layerHeight;
@@ -77,13 +77,13 @@ public class TilesMapRendererImpl extends TilesMapRenderer {
 			}
 		});
 
-		tileDrawers.set(TileDrawerManager.MID_PRIORITY, (map, layer, row, column, delta) -> {
-			if (map.tiles.tile(layer, row, column) != TileType.EMPTY) {
+		tileDrawers.set(TileDrawerManager.MID_PRIORITY, (layer, row, column, delta) -> {
+			if (map.tiles.get(layer, row, column).getType() != TileType.EMPTY) {
 				drawnTiles.getAndIncrement();
 			}
 		});
 
-		tileDrawers.set(TileDrawerManager.HIGH_PRIORITY, (map, layer, row, column, delta) -> {
+		tileDrawers.set(TileDrawerManager.HIGH_PRIORITY, (layer, row, column, delta) -> {
 //            if (!map.isDebugMode()) return;
 			ShapeDrawer shapeDrawer = map.scene.getGame().getBatch().getShapeDrawer();
 			shapeDrawer.setDefaultLineWidth(1);
@@ -93,7 +93,7 @@ public class TilesMapRendererImpl extends TilesMapRenderer {
 		});
 		
         tileDrawers.set(TileDrawerManager.MID_PRIORITY,
-				(map, layer, row, column, delta) -> {
+				(layer, row, column, delta) -> {
 					Set<IsoActor> actors = map.actors.get(layer, row, column);
         			if (actors == null) {
         				return;

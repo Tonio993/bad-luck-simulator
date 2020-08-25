@@ -8,6 +8,8 @@ import java.util.TreeMap;
 
 public class TileDrawerManager {
 	
+	private MapManager map;
+	
 	public static final int LOW_PRIORITY = 10;
 	public static final int MID_PRIORITY = 20;
 	public static final int HIGH_PRIORITY = 30;
@@ -15,7 +17,8 @@ public class TileDrawerManager {
 	Map<Integer, List<TileDrawer>> drawerSets;
 	Map<TileDrawer, Integer> drawers;
 	
-	public TileDrawerManager() {
+	public TileDrawerManager(MapManager map) {
+		this.map = map;
 		drawerSets = new TreeMap<>();
 		drawers = new HashMap<>();
 	}
@@ -57,5 +60,13 @@ public class TileDrawerManager {
 	
 	public Iterable<List<TileDrawer>> getDrawerSets() {
 		return drawerSets.values();
+	}
+
+	public MapManager getMap() {
+		return map;
+	}
+
+	public void setMap(MapManager map) {
+		this.map = map;
 	}
 }

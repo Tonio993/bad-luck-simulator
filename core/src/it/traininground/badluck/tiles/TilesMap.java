@@ -2,18 +2,13 @@ package it.traininground.badluck.tiles;
 
 import com.badlogic.gdx.utils.Array;
 
-import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
-import java.io.Serializable;
-import java.util.Arrays;
-import java.util.List;
-
-public class TilesMap implements Serializable {
+public class TilesMap {
 
     private static final TileType DEFAULT_TILE = TileType.PLAIN;
+    
+    private MapManager map;
 
-    private Array<Array<Array<TileType>>> mapMatrix;
+    private Array<Array<Array<Tile>>> mapMatrix;
     protected int layers;
     protected int rows;
     protected int columns;
@@ -28,11 +23,13 @@ public class TilesMap implements Serializable {
             if (builder.getBaseLayer() != -1 && l == builder.getBaseLayer() + 1) {
                 currentType = builder.getDefaultEmptyTile();
             }
-            Array<Array<TileType>> mapLayer = new Array<>(rows);
+            Array<Array<Tile>> mapLayer = new Array<>(rows);
             for (int r = 0; r < rows; r++) {
-                Array<TileType> mapRow = new Array<>(columns);
+                Array<Tile> mapRow = new Array<>(columns);
                 for (int c = 0; c < columns; c++) {
-                    mapRow.add(currentType);
+                	Tile tile = new Tile(this, l, r, c);
+                	tile.setType(currentType);
+                    mapRow.add(tile);
                 }
                 mapLayer.add(mapRow);
             }
@@ -41,21 +38,22 @@ public class TilesMap implements Serializable {
 
     }
 
-    public TilesMap(int layers, int rows, int columns) {
-        this(layers, rows, columns, DEFAULT_TILE);
+    public TilesMap(MapManager map, int layers, int rows, int columns) {
+        this(map, layers, rows, columns, DEFAULT_TILE);
     }
 
-    public TilesMap(int layers, int rows, int columns, TileType defaultTile) {
+    public TilesMap(MapManager map, int layers, int rows, int columns, TileType defaultTile) {
+    	this.map = map;
         this.layers = layers;
         this.rows = rows;
         this.columns = columns;
         mapMatrix = new Array<>(layers);
         for (int l = 0; l < layers; l++) {
-            Array<Array<TileType>> mapLayer = new Array<>(rows);
+            Array<Array<Tile>> mapLayer = new Array<>(rows);
             for (int r = 0; r < rows; r++) {
-                Array<TileType> mapRow = new Array<>(columns);
+                Array<Tile> mapRow = new Array<>(columns);
                 for (int c = 0; c < columns; c++) {
-                    mapRow.add(defaultTile);
+                    mapRow.add(new Tile(this, l, r, c));
                 }
                 mapLayer.add(mapRow);
             }
@@ -63,51 +61,17 @@ public class TilesMap implements Serializable {
         }
     }
 
-    public TileType tile(int layer, int row, int column) {
+    public Tile get(int layer, int row, int column) {
         return mapMatrix.get(layer).get(row).get(column);
     }
     
-    public TileType tile(Tile tile) {
-    	return mapMatrix.get(tile.getLayer()).get(tile.getRow()).get(tile.getColumn());
-    }
+	public MapManager getMap() {
+		return map;
+	}
 
-    public void tile(int layer, int row, int column, TileType terrainType) {
-        mapMatrix.get(layer).get(row).set(column, terrainType);
-    }
-
-    private void writeObject(ObjectOutputStream stream) throws IOException {
-        stream.writeInt(layers);
-        stream.writeInt(rows);
-        stream.writeInt(columns);
-        List<TileType> terrainTypes = Arrays.asList(TileType.values());
-        for (Array<Array<TileType>> layer : mapMatrix) {
-            for (Array<TileType> row : layer) {
-                for (TileType tile : row) {
-                    stream.writeInt(terrainTypes.indexOf(tile));
-                }
-            }
-        }
-    }
-
-    private void readObject(ObjectInputStream stream) throws IOException {
-        layers = stream.readInt();
-        rows = stream.readInt();
-        columns = stream.readInt();
-        mapMatrix = new Array<>(layers);
-        mapMatrix = new Array<>(layers);
-        List<TileType> terrainTypes = Arrays.asList(TileType.values());
-        for (int l = 0; l < layers; l++) {
-            Array<Array<TileType>> mapLayer = new Array<>(rows);
-            for (int r = 0; r < rows; r++) {
-                Array<TileType> mapRow = new Array<>(columns);
-                for (int c = 0; c < columns; c++) {
-                    mapRow.add(terrainTypes.get(stream.readInt()));
-                }
-                mapLayer.add(mapRow);
-            }
-            mapMatrix.add(mapLayer);
-        }
-    }
+	public void setMap(MapManager map) {
+		this.map = map;
+	}
 
 	public int getLayers() {
 		return layers;

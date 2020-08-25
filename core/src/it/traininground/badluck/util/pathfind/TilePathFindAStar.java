@@ -19,83 +19,91 @@ public class TilePathFindAStar extends PathFindAStar<Tile> {
 
 	@Override
 	float distance(Tile from, Tile to) {
-		return Vector3.len(from.getLayer() - to.getLayer(), from.getRow() - to.getRow(), from.getColumn() - to.getColumn());
+		return Vector3.len(from.layer - to.layer, from.row - to.row, from.column - to.column);
 	}
 
 	@Override
 	public Set<Tile> neighbors(Tile current) {
 		Set<Tile> neighbors = new HashSet<>();
-		boolean firstRow = current.getRow() == 0;
-		boolean lastRow = current.getRow() == map.getRows() - 1;
-		boolean firstColumn = current.getColumn() == 0;
-		boolean lastColumn = current.getColumn() == map.getColumns() - 1;
-		int minLayer = Math.max(1, current.getLayer() - 1);
-		int maxLayer = Math.min(map.getLayers() - 1, current.getLayer() + 1);
-		Tile currentTile = new Tile(0, 0, 0);
+		boolean firstRow = current.row == 0;
+		boolean lastRow = current.row == map.getRows() - 1;
+		boolean firstColumn = current.column == 0;
+		boolean lastColumn = current.column == map.getColumns() - 1;
+		int minLayer = Math.max(1, current.layer - 1);
+		int maxLayer = Math.min(map.getLayers() - 1, current.layer + 1);
+		Tile currentTile = null;
 		for (int layer = minLayer; layer <= maxLayer; layer++) {
-			currentTile.set(layer, current.getRow(), current.getColumn());
-			if (layer > current.getLayer() && map.tile(currentTile) != TileType.EMPTY) {
+			currentTile = current.toLayer(layer);
+			if (layer > current.layer && currentTile.getType() != TileType.EMPTY) {
 				continue;
 			}
 			boolean north = false, west = false, south = false, east = false;
-			currentTile.set(layer, current.getRow() - 1, current.getColumn());
 			if (!firstRow) {
+				currentTile = map.get(layer, current.row - 1, current.column);
 				if (isAccessible(currentTile)) {
-					neighbors.add(new Tile(currentTile));
+					neighbors.add(currentTile);
 				}
-				if (map.tile(currentTile) == TileType.EMPTY) {
+				if (currentTile.getType() == TileType.EMPTY) {
 					west = true;
 				}
 			}
-			currentTile.set(layer, current.getRow() + 1, current.getColumn());
 			if (!lastRow) {
+				currentTile = map.get(layer, current.row + 1, current.column);
 				if (isAccessible(currentTile)) {
-					neighbors.add(new Tile(currentTile));
+					neighbors.add(currentTile);
 				}
-				if (map.tile(currentTile) == TileType.EMPTY) {
+				if (currentTile.getType() == TileType.EMPTY) {
 					east = true;
 				}
 			}
-			currentTile.set(layer, current.getRow(), current.getColumn() - 1);
 			if (!firstColumn) {
+				currentTile = map.get(layer, current.row, current.column - 1);
 				if (isAccessible(currentTile)) {
-					neighbors.add(new Tile(currentTile));
+					neighbors.add(currentTile);
 				}
-				if (map.tile(currentTile) == TileType.EMPTY) {
+				if (currentTile.getType() == TileType.EMPTY) {
 					north = true;
 				}
 			}
-			currentTile.set(layer, current.getRow(), current.getColumn() + 1);
 			if (!lastColumn) {
+				currentTile = map.get(layer, current.row, current.column + 1);
 				if (isAccessible(currentTile)) {
-					neighbors.add(new Tile(currentTile));
+					neighbors.add(currentTile);
 				}
-				if (map.tile(currentTile) == TileType.EMPTY) {
+				if (currentTile.getType() == TileType.EMPTY) {
 					south = true;
 				}
 			}
-			currentTile.set(layer, current.getRow() - 1, current.getColumn() - 1);
-			if (north && west && isAccessible(currentTile)) {
-				neighbors.add(new Tile(currentTile));
+			if (north && west) {
+				currentTile = map.get(layer, current.row - 1, current.column - 1);
+				if (isAccessible(currentTile)) {
+					neighbors.add(currentTile);
+				}
 			}
-			currentTile.set(layer, current.getRow() - 1, current.getColumn() + 1);
-			if (south && west && isAccessible(currentTile)) {
-				neighbors.add(new Tile(currentTile));
+			if (south && west) {
+				currentTile = map.get(layer, current.row - 1, current.column + 1);
+				if (isAccessible(currentTile)) {
+					neighbors.add(currentTile);
+				}				
 			}
-			currentTile.set(layer, current.getRow() + 1, current.getColumn() + 1);
-			if (south && east && isAccessible(currentTile)) {
-				neighbors.add(new Tile(currentTile));
+			if (south && east) {
+				currentTile = map.get(layer, current.row + 1, current.column + 1);
+				if (isAccessible(currentTile)) {
+					neighbors.add(currentTile);
+				}
 			}
-			currentTile.set(layer, current.getRow() + 1, current.getColumn() - 1);
-			if (north && east && isAccessible(currentTile)) {
-				neighbors.add(new Tile(currentTile));
+			if (north && east) {
+				currentTile = map.get(layer, current.row + 1, current.column - 1);
+				if (isAccessible(currentTile)) {
+					neighbors.add(currentTile);
+				}
 			}
 		}
 		return neighbors;
 	}
 	
 	private boolean isAccessible(Tile tile) {
-		return map.tile(tile.getLayer(), tile.getRow(), tile.getColumn()) == TileType.EMPTY && map.tile(tile.getLayer() - 1, tile.getRow(), tile.getColumn()) != TileType.EMPTY;
+		return tile.getType() == TileType.EMPTY && tile.toLayer(tile.layer - 1).getType() != TileType.EMPTY;
 	}
 
 	@Override

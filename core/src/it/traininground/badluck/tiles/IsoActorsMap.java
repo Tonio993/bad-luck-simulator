@@ -6,14 +6,15 @@ import java.util.Map;
 import java.util.Set;
 
 import it.traininground.badluck.actor.IsoActor;
-import it.traininground.badluck.util.InfoDrawer;
 
 public class IsoActorsMap {
 	
-	private Map<Tile, Set<IsoActor>> actors;
-	private Tile getTile = new Tile();
+	private MapManager map;
 	
-	public IsoActorsMap() {
+	private Map<Tile, Set<IsoActor>> actors;
+	
+	public IsoActorsMap(MapManager map) {
+		this.map = map;
 		actors = new HashMap<>();
 	}
 	
@@ -56,9 +57,15 @@ public class IsoActorsMap {
 	}
 	
 	public Set<IsoActor> get(int layer, int row, int column) {
-		InfoDrawer.put("info", actors.size());
-		getTile.set(layer, row, column);
-		return actors.get(getTile);
+		return actors.get(map.getTiles().get(layer, row, column));
+	}
+
+	public MapManager getMap() {
+		return map;
+	}
+
+	public void setMap(MapManager map) {
+		this.map = map;
 	}
 	
 }
