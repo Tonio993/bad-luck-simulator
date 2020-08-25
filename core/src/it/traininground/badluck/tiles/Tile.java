@@ -10,6 +10,12 @@ public class Tile implements Comparable<Tile> {
 		this(-1, -1, -1);
 	}
 	
+	public Tile(Tile tile) {
+		this.layer = tile.layer;
+		this.row = tile.row;
+		this.column = tile.column;
+	}
+	
 	public Tile(int layer, int row, int column) {
 		super();
 		this.layer = layer;
@@ -45,6 +51,12 @@ public class Tile implements Comparable<Tile> {
 		this.layer = layer;
 		this.row = row;
 		this.column = column;
+	}
+	
+	public void set(Tile tile) {
+		this.layer = tile.layer;
+		this.row = tile.row;
+		this.column = tile.column;
 	}
 
 	public void unset() {
@@ -90,6 +102,10 @@ public class Tile implements Comparable<Tile> {
 		if (row != other.row)
 			return false;
 		return true;
+	}
+	
+	public boolean equals(int layer, int row, int column) {
+		return this.layer == layer && this.row == row && this.column == column;
 	}
 
 	@Override

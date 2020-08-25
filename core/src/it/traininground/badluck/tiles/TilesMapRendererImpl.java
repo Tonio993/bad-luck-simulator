@@ -2,12 +2,13 @@ package it.traininground.badluck.tiles;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 
-import it.traininground.badluck.actor.Dude;
+import it.traininground.badluck.actor.IsoActor;
 import it.traininground.badluck.tiles.debug.CubeShape;
 import it.traininground.badluck.util.GameBatch;
 import space.earlygrey.shapedrawer.ShapeDrawer;
@@ -20,8 +21,6 @@ public class TilesMapRendererImpl extends TilesMapRenderer {
 
     AtomicInteger drawnTiles = new AtomicInteger();
     
-    public Dude dude;
-
     public TilesMapRendererImpl(int cellWidth, int cellHeight, int layerHeight) {
         super(cellWidth, cellHeight, layerHeight);
 
@@ -92,13 +91,16 @@ public class TilesMapRendererImpl extends TilesMapRenderer {
 			shapeDrawer.line(x - 10, y, x + 10, y);
 			shapeDrawer.line(x, y - 10, x, y + 10);
 		});
-
+		
         tileDrawers.set(TileDrawerManager.MID_PRIORITY,
 				(map, layer, row, column, delta) -> {
-					Tile tile = new Tile(Math.round(dude.getlAxis()), Math.round(dude.getrAxis()), Math.round(dude.getcAxis()));
-					if (dude != null && tile.getLayer() == layer && tile.getRow() == row && tile.getColumn() == column) {
+					Set<IsoActor> actors = map.actors.get(layer, row, column);
+        			if (actors == null) {
+        				return;
+        			}
+					for (IsoActor actor : actors) {
 						GameBatch batch = map.scene.getGame().getBatch();
-						dude.draw(batch, delta);
+						actor.draw(batch, delta);
 					}
 				}
 		);

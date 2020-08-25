@@ -4,6 +4,7 @@ import com.badlogic.gdx.Screen;
 
 import it.traininground.badluck.GameMain;
 import it.traininground.badluck.camera.CameraManager;
+import it.traininground.badluck.gameplay.GameplayManager;
 import it.traininground.badluck.input.InputManager;
 
 public abstract class Scene implements Screen {
@@ -11,11 +12,13 @@ public abstract class Scene implements Screen {
     protected GameMain game;
     protected CameraManager camera;
     protected InputManager input;
+    protected GameplayManager gameplay;
 
     public Scene(GameMain game) {
         this.game = game;
         camera = new CameraManager(this);
         input = new InputManager(this);
+        gameplay = new GameplayManager(this);
     }
 
 	public GameMain getGame() {
@@ -40,6 +43,14 @@ public abstract class Scene implements Screen {
 
 	public void setInput(InputManager input) {
 		this.input = input;
+	}
+
+	public GameplayManager getGameplay() {
+		return gameplay;
+	}
+
+	public void setGameplay(GameplayManager gameplay) {
+		this.gameplay = gameplay;
 	}
 
 }

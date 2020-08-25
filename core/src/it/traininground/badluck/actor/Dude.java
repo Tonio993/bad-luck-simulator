@@ -1,14 +1,15 @@
 package it.traininground.badluck.actor;
 
 import com.badlogic.gdx.graphics.g2d.Animation;
-import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.utils.Disposable;
 
+import it.traininground.badluck.draw.Drawable;
 import it.traininground.badluck.tiles.MapManager;
 import it.traininground.badluck.tiles.Tile;
+import it.traininground.badluck.util.GameBatch;
 
-public class Dude extends IsoActor implements Disposable {
+public class Dude extends IsoActor implements Disposable, Drawable {
 
     private final TextureAtlas idleDude;
     private final Animation<TextureAtlas.AtlasRegion> idleDudeAnimation;
@@ -23,17 +24,9 @@ public class Dude extends IsoActor implements Disposable {
     private float currentFrameTime;
 
     public Dude(MapManager map, Tile tile) {
-    	super(map);
+    	super(map, tile);
     	this.speed = 5;
     	this.map = map;
-    	this.tile = tile;
-    	
-    	this.lAxis = tile.getLayer();
-    	this.rAxis = tile.getRow();
-    	this.cAxis = tile.getColumn();
-    	
-    	this.x = map.getRenderer().getX() + (tile.getRow() - tile.getColumn()) * (map.getRenderer().getCellWidth() / 2f);
-    	this.y = map.getRenderer().getY() - (tile.getRow() + tile.getColumn()) * (map.getRenderer().getCellHeight() / 2f) + map.getRenderer().getLayerHeight() * tile.getLayer();
     	
         idleDude = new TextureAtlas("dude/idle.atlas");
         idleDudeAnimation = new Animation<>(1/10f, idleDude.getRegions());
@@ -47,11 +40,9 @@ public class Dude extends IsoActor implements Disposable {
         
     }
 
-    public void draw(SpriteBatch batch, float delta) {
+    public void draw(GameBatch batch, float delta) {
         currentFrameTime += delta;
         
-        move(delta);
-
         if (direction.x > 0) flipped = false;
         if (direction.x < 0) flipped = true;
 

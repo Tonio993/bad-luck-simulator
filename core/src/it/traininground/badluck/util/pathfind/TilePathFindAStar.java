@@ -31,45 +31,71 @@ public class TilePathFindAStar extends PathFindAStar<Tile> {
 		boolean lastColumn = current.getColumn() == map.getColumns() - 1;
 		int minLayer = Math.max(1, current.getLayer() - 1);
 		int maxLayer = Math.min(map.getLayers() - 1, current.getLayer() + 1);
+		Tile currentTile = new Tile(0, 0, 0);
 		for (int layer = minLayer; layer <= maxLayer; layer++) {
-			if (layer > current.getLayer() && map.tile(layer, current.getRow(), current.getColumn()) != TileType.EMPTY) {
+			currentTile.set(layer, current.getRow(), current.getColumn());
+			if (layer > current.getLayer() && map.tile(currentTile) != TileType.EMPTY) {
 				continue;
 			}
 			boolean north = false, west = false, south = false, east = false;
-			if (!firstRow && isAccessible(layer, current.getRow() - 1, current.getColumn())) {
-				neighbors.add(new Tile(layer, current.getRow() - 1, current.getColumn()));
-				west = true;
+			currentTile.set(layer, current.getRow() - 1, current.getColumn());
+			if (!firstRow) {
+				if (isAccessible(currentTile)) {
+					neighbors.add(new Tile(currentTile));
+				}
+				if (map.tile(currentTile) == TileType.EMPTY) {
+					west = true;
+				}
 			}
-			if (!lastRow && isAccessible(layer, current.getRow() + 1, current.getColumn())) {
-				neighbors.add(new Tile(layer, current.getRow() + 1, current.getColumn()));
-				east = true;
+			currentTile.set(layer, current.getRow() + 1, current.getColumn());
+			if (!lastRow) {
+				if (isAccessible(currentTile)) {
+					neighbors.add(new Tile(currentTile));
+				}
+				if (map.tile(currentTile) == TileType.EMPTY) {
+					east = true;
+				}
 			}
-			if (!firstColumn && isAccessible(layer, current.getRow(), current.getColumn() - 1)) {
-				neighbors.add(new Tile(layer, current.getRow(), current.getColumn() - 1));
-				north = true;
+			currentTile.set(layer, current.getRow(), current.getColumn() - 1);
+			if (!firstColumn) {
+				if (isAccessible(currentTile)) {
+					neighbors.add(new Tile(currentTile));
+				}
+				if (map.tile(currentTile) == TileType.EMPTY) {
+					north = true;
+				}
 			}
-			if (!lastColumn && isAccessible(layer, current.getRow(), current.getColumn() + 1)) {
-				neighbors.add(new Tile(layer, current.getRow(), current.getColumn() + 1));
-				south = true;
+			currentTile.set(layer, current.getRow(), current.getColumn() + 1);
+			if (!lastColumn) {
+				if (isAccessible(currentTile)) {
+					neighbors.add(new Tile(currentTile));
+				}
+				if (map.tile(currentTile) == TileType.EMPTY) {
+					south = true;
+				}
 			}
-			if (north && west && isAccessible(layer, current.getRow() - 1, current.getColumn() - 1)) {
-				neighbors.add(new Tile(layer, current.getRow() - 1, current.getColumn() - 1));
+			currentTile.set(layer, current.getRow() - 1, current.getColumn() - 1);
+			if (north && west && isAccessible(currentTile)) {
+				neighbors.add(new Tile(currentTile));
 			}
-			if (south && west && isAccessible(layer, current.getRow() - 1, current.getColumn() + 1)) {
-				neighbors.add(new Tile(layer, current.getRow() - 1, current.getColumn() + 1));
+			currentTile.set(layer, current.getRow() - 1, current.getColumn() + 1);
+			if (south && west && isAccessible(currentTile)) {
+				neighbors.add(new Tile(currentTile));
 			}
-			if (south && east && isAccessible(layer, current.getRow() + 1, current.getColumn() + 1)) {
-				neighbors.add(new Tile(layer, current.getRow() + 1, current.getColumn() + 1));
+			currentTile.set(layer, current.getRow() + 1, current.getColumn() + 1);
+			if (south && east && isAccessible(currentTile)) {
+				neighbors.add(new Tile(currentTile));
 			}
-			if (north && east && isAccessible(layer, current.getRow() + 1, current.getColumn() - 1)) {
-				neighbors.add(new Tile(layer, current.getRow() + 1, current.getColumn() - 1));
+			currentTile.set(layer, current.getRow() + 1, current.getColumn() - 1);
+			if (north && east && isAccessible(currentTile)) {
+				neighbors.add(new Tile(currentTile));
 			}
 		}
 		return neighbors;
 	}
 	
-	private boolean isAccessible(int layer, int row, int column) {
-		return map.tile(layer, row, column) == TileType.EMPTY && map.tile(layer - 1, row, column) != TileType.EMPTY;
+	private boolean isAccessible(Tile tile) {
+		return map.tile(tile.getLayer(), tile.getRow(), tile.getColumn()) == TileType.EMPTY && map.tile(tile.getLayer() - 1, tile.getRow(), tile.getColumn()) != TileType.EMPTY;
 	}
 
 	@Override

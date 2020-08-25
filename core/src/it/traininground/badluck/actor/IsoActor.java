@@ -1,17 +1,20 @@
 package it.traininground.badluck.actor;
 
+import java.util.LinkedList;
 import java.util.List;
 
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
 
+import it.traininground.badluck.tiles.IsoActorsMap;
 import it.traininground.badluck.tiles.MapManager;
 import it.traininground.badluck.tiles.Tile;
+import it.traininground.badluck.util.GameBatch;
 import it.traininground.badluck.util.InfoDrawer;
 import it.traininground.badluck.util.MathUtil;
 import it.traininground.badluck.util.statistics.TimeStats;
 
-public class IsoActor implements Actor {
+public abstract class IsoActor implements Actor {
 	
 	protected MapManager map;
 	
@@ -26,12 +29,28 @@ public class IsoActor implements Actor {
 	protected Tile nextTile;
 	protected List<Tile> path;
 	
+	protected Tile drawingTile;
+	
 	protected Vector2 direction = new Vector2(1, 0);
 	
 	protected float speed;
 	
-	public IsoActor(MapManager map) {
+	protected List<IsoActorsMap> listenersMap;
+	
+	public IsoActor(MapManager map, Tile tile) {
 		this.map = map;
+		
+    	this.tile = tile;
+    	this.drawingTile = new Tile(tile);
+    	
+    	this.lAxis = tile.getLayer();
+    	this.rAxis = tile.getRow();
+    	this.cAxis = tile.getColumn();
+    	
+    	this.x = map.getRenderer().getX() + (tile.getRow() - tile.getColumn()) * (map.getRenderer().getCellWidth() / 2f);
+    	this.y = map.getRenderer().getY() - (tile.getRow() + tile.getColumn()) * (map.getRenderer().getCellHeight() / 2f) + map.getRenderer().getLayerHeight() * tile.getLayer();
+    	
+    	listenersMap = new LinkedList<>();
 	}
 
 	public void move(float delta) {
@@ -76,9 +95,27 @@ public class IsoActor implements Actor {
     	if (nextTile == null) {
     		InfoDrawer.put("movement", TimeStats.stopGetAndReset("move"));
     	}
+    	
+    	Tile nextDrawingTile = new Tile(Math.round(getlAxis()), Math.round(getrAxis()), Math.round(getcAxis()));
+    	if (!drawingTile.equals(nextDrawingTile)) {
+    		for (IsoActorsMap listener : listenersMap) {
+    			listener.move(this, nextDrawingTile);
+    		}
+    	}
+    	drawingTile.set(nextDrawingTile);
 
 	}
-
+	
+	public abstract void draw(GameBatch batch, float delta);
+	
+	public void add(IsoActorsMap listener) {
+		listenersMap.add(listener);
+	}
+	
+	public void remove(IsoActorsMap listener) {
+		listenersMap.remove(listener);
+	}
+	
 	public MapManager getMap() {
 		return map;
 	}
@@ -149,6 +186,14 @@ public class IsoActor implements Actor {
 
 	public void setPath(List<Tile> path) {
 		this.path = path;
+	}
+
+	public Tile getDrawingTile() {
+		return drawingTile;
+	}
+
+	public void setDrawingTile(Tile drawingTile) {
+		this.drawingTile = drawingTile;
 	}
 
 	public Vector2 getDirection() {

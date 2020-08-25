@@ -66,6 +66,10 @@ public class TilesMap implements Serializable {
     public TileType tile(int layer, int row, int column) {
         return mapMatrix.get(layer).get(row).get(column);
     }
+    
+    public TileType tile(Tile tile) {
+    	return mapMatrix.get(tile.getLayer()).get(tile.getRow()).get(tile.getColumn());
+    }
 
     public void tile(int layer, int row, int column, TileType terrainType) {
         mapMatrix.get(layer).get(row).set(column, terrainType);

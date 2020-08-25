@@ -3,6 +3,7 @@ package it.traininground.badluck.scenes;
 import java.io.IOException;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Input.Buttons;
 import com.badlogic.gdx.graphics.GL20;
 
 import it.traininground.badluck.GameMain;
@@ -12,6 +13,7 @@ import it.traininground.badluck.input.handlers.DudeInput;
 import it.traininground.badluck.input.handlers.GameCloseInput;
 import it.traininground.badluck.input.handlers.MapSelectionHandler;
 import it.traininground.badluck.input.handlers.UpdateRegionInput;
+import it.traininground.badluck.tiles.IsoActorsMap;
 import it.traininground.badluck.tiles.MapManager;
 import it.traininground.badluck.tiles.MapRegionFilter;
 import it.traininground.badluck.tiles.MapRegionFilterImpl;
@@ -26,7 +28,6 @@ import it.traininground.badluck.util.InfoDrawer;
 
 public class GameplayScene extends Scene {
 
-    private Dude dude;
     private MapManager map;
 
     public GameplayScene(GameMain game) throws IOException, ClassNotFoundException {
@@ -61,7 +62,9 @@ public class GameplayScene extends Scene {
         MapRegionFilter region = new MapRegionFilterImpl();
         MapSelection selection = new MapSelection();
         
-        map = new MapManager(this, tiles, renderer, region, selection);
+        IsoActorsMap actors = new IsoActorsMap();
+        
+        map = new MapManager(this, tiles, renderer, region, selection, actors);
 //        map.setDebugMode(true);
 
         input.bind(new CameraMoveInput(input));
@@ -69,16 +72,15 @@ public class GameplayScene extends Scene {
         input.bind(new GameCloseInput(input));
         input.bind(new MapSelectionHandler(input));
         
-        dude = new Dude(map, new Tile(1, 0, 0));
-        input.bind(new DudeInput(input, dude));
-        
-        renderer.dude = dude;
-        
+        Dude dude = new Dude(map, new Tile(1, 0, 0));
+        input.bind(new DudeInput(input, dude, Buttons.LEFT));
+        actors.add(dude);
+        gameplay.add(dude);
+
     }
 
     @Override
     public void show() {
-
     }
 
     @Override
@@ -91,6 +93,8 @@ public class GameplayScene extends Scene {
 
         game.getBatch().begin();
         game.getBatch().setProjectionMatrix(camera.getMain().combined);
+        
+        gameplay.move(delta);
 
         map.draw(game.getBatch(), delta);
 

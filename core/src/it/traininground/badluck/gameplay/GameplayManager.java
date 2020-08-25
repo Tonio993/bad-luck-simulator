@@ -3,14 +3,17 @@ package it.traininground.badluck.gameplay;
 import java.util.HashSet;
 
 import it.traininground.badluck.actor.Actor;
+import it.traininground.badluck.scenes.Scene;
 
 public class GameplayManager {
 	
+	protected Scene scene;
+	
 	HashSet<Actor> actors;
 	
-	public GameplayManager(HashSet<Actor> actors) {
-		super();
-		this.actors = actors;
+	public GameplayManager(Scene scene) {
+		this.actors = new HashSet<>();
+		this.scene = scene;
 	}
 
 	public void add(Actor actor) {
@@ -25,6 +28,14 @@ public class GameplayManager {
 		for (Actor actor : actors) {
 			actor.move(delta);
 		}
+	}
+
+	public Scene getScene() {
+		return scene;
+	}
+
+	public void setScene(Scene scene) {
+		this.scene = scene;
 	}
 	
 }
