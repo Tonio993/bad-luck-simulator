@@ -5,12 +5,16 @@ import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicInteger;
 
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
+import com.badlogic.gdx.graphics.glutils.ShaderProgram;
 
 import it.traininground.badluck.actor.IsoActor;
 import it.traininground.badluck.tiles.debug.CubeShape;
 import it.traininground.badluck.util.GameBatch;
+import it.traininground.badluck.util.InfoDrawer;
+import it.traininground.badluck.util.MathUtil;
 import space.earlygrey.shapedrawer.ShapeDrawer;
 
 public class TilesMapRendererImpl extends TilesMapRenderer {
@@ -21,8 +25,13 @@ public class TilesMapRendererImpl extends TilesMapRenderer {
 
     AtomicInteger drawnTiles = new AtomicInteger();
     
+    private ShaderProgram shader = new ShaderProgram(Gdx.files.internal("shader/fadeTile.vs"), Gdx.files.internal("shader/fadeTile.fs"));
+    
     public TilesMapRendererImpl(MapManager map, int cellWidth, int cellHeight, int layerHeight) {
         super(map, cellWidth, cellHeight, layerHeight);
+        
+        if (shader.getLog().length()!=0)
+    		System.out.println(shader.getLog());
 
         debugShape = new CubeShape(cellWidth, cellHeight, layerHeight);
 
@@ -41,12 +50,19 @@ public class TilesMapRendererImpl extends TilesMapRenderer {
 		tileDrawers.set(TileDrawerManager.MID_PRIORITY, (layer, row, column, delta) -> {
 			if (map.isDebugMode())
 				return;
-			TileType terrainType = map.tiles.get(layer, row, column).getType();
-			if (terrainType != TileType.EMPTY) {
+			TileType tileType = map.tiles.get(layer, row, column).getType();
+			if (tileType != TileType.EMPTY) {
 				float currentOffsetX = x + (row - column - 1) * cellWidth / 2f;
 				float currentOffsetY = y - (row + column + 2) * cellHeight / 2f + layerHeight * (layer - 1);
 				GameBatch batch = map.scene.getGame().getBatch();
-				batch.draw(terrainMap.get(terrainType), currentOffsetX, currentOffsetY);
+				
+				InfoDrawer.put("layer", (layer - map.getRegion().visibleLayer));
+				batch.setShader(shader);
+				shader.setUniformf("u_fade", MathUtil.between((map.getRegion().visibleLayer - layer - 10) / 30f, 0, 1));
+				shader.setUniformf("u_fadeColor", Color.LIGHT_GRAY);
+				batch.setColor(2f, 2f, 2f, 1);
+				batch.draw(terrainMap.get(tileType), currentOffsetX, currentOffsetY);
+				batch.setShader(null);
 			}
 		});
 
@@ -83,16 +99,7 @@ public class TilesMapRendererImpl extends TilesMapRenderer {
 			}
 		});
 
-		tileDrawers.set(TileDrawerManager.HIGH_PRIORITY, (layer, row, column, delta) -> {
-//            if (!map.isDebugMode()) return;
-			ShapeDrawer shapeDrawer = map.scene.getGame().getBatch().getShapeDrawer();
-			shapeDrawer.setDefaultLineWidth(1);
-			shapeDrawer.setColor(Color.BLACK);
-			shapeDrawer.line(x - 10, y, x + 10, y);
-			shapeDrawer.line(x, y - 10, x, y + 10);
-		});
-		
-        tileDrawers.set(TileDrawerManager.MID_PRIORITY,
+		tileDrawers.set(TileDrawerManager.MID_PRIORITY,
 				(layer, row, column, delta) -> {
 					Set<IsoActor> actors = map.actors.get(layer, row, column);
         			if (actors == null) {
@@ -100,7 +107,11 @@ public class TilesMapRendererImpl extends TilesMapRenderer {
         			}
 					for (IsoActor actor : actors) {
 						GameBatch batch = map.scene.getGame().getBatch();
+						batch.setShader(shader);
+						shader.setUniformf("u_fade", MathUtil.between((map.getRegion().visibleLayer - layer - 10) / 30f, 0, 1));
+						shader.setUniformf("u_fadeColor", Color.LIGHT_GRAY);
 						actor.draw(batch, delta);
+						batch.setShader(null);
 					}
 				}
 		);

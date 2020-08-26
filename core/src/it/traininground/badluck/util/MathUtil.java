@@ -18,7 +18,11 @@ public class MathUtil {
     public static int between(int value, int min, int max) {
         return Math.min(Math.max(value, min), max);
     }
-
+    
+    public static float between(float value, float min, float max) {
+    	return Math.min(Math.max(value, min), max);
+    }
+    
     public static float round(float value, int places) {
         if (places < 0) throw new IllegalArgumentException();
 

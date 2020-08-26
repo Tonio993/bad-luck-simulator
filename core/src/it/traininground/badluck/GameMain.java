@@ -1,30 +1,27 @@
 package it.traininground.badluck;
 
-import java.io.IOException;
-
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
 
 import it.traininground.badluck.scenes.GameplayScene;
 import it.traininground.badluck.scenes.Scene;
 import it.traininground.badluck.util.GameBatch;
-import it.traininground.badluck.util.ShapeDrawerUtil;
-import space.earlygrey.shapedrawer.ShapeDrawer;
 
 public class GameMain extends Game {
 	private GameBatch batch;
-	private ShapeDrawer shape;
 
 	boolean closeApplication;
+	
+	public GameMain() {
+	}
 
 	@Override
 	public void create () {
-		this.batch = new GameBatch();
-		shape = ShapeDrawerUtil.createShapeDrawer(batch);
 		try {
+			batch = new GameBatch();
 			setScreen(new GameplayScene(this));
-		} catch (IOException | ClassNotFoundException e) {
-			e.printStackTrace();
+		} catch (Exception e) { 
+			e.printStackTrace(); 
 		}
 	}
 
@@ -44,10 +41,6 @@ public class GameMain extends Game {
 
 	public GameBatch getBatch() {
 		return batch;
-	}
-
-	public ShapeDrawer getShape() {
-		return shape;
 	}
 
 	public void setScreen(Scene screen) {

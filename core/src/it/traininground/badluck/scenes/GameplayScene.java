@@ -78,7 +78,7 @@ public class GameplayScene extends Scene {
         actors.add(dude);
         gameplay.add(dude);
         
-        map.init();
+        region.setVisibleLayer(10);
 
     }
 

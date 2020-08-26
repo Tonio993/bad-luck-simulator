@@ -46,5 +46,6 @@ public abstract class MapRegionFilter {
 
 	public void setVisibleLayer(int visibleLayer) {
 		this.visibleLayer = visibleLayer;
+		updateRegion(map);
 	}
 }
